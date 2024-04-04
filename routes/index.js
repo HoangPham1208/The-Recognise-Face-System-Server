@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
+var route_1 = require('./route_1')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    res.json('Jallo world')
-});
+function router(app) {
+    app.use('/api/route_1',route_1)
+    // app.get('*', function (req, res) { 
+    //     res.send("404 - not found")
+    // })
+}
 
 module.exports = router;
