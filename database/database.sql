@@ -75,11 +75,11 @@ INSERT INTO `account` (`ID`, `account_name`, `password`, `avatar`, `name`, `phon
 
 
 -- Procedure `add_employee`:
--- CALL add_employee('ID', 'account_name', 'password', 'avatar', 'name', `phone_num', 'status', 'address', 'face_fodel', 'position', `working_days`);
+-- CALL add_employee('ID', 'account_name', 'password', 'avatar', 'name', `phone_num', 'status', 'address', 'face_model', 'position', `working_days`);
 DELIMITER $$
 CREATE PROCEDURE `add_employee` (IN `ID` INT, IN `account_name` CHAR(255), IN `password` CHAR(255), IN `avatar` MEDIUMTEXT, IN `name` CHAR(255), IN `phone_num` INT, IN `status` TINYINT, IN `address` CHAR(255), IN `face_fodel` MEDIUMTEXT, IN `position` CHAR(255), IN `working_days` INT)
 BEGIN
-    INSERT INTO `account` (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_fodel`) VALUES (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_fodel`);
+    INSERT INTO `account` (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_model`) VALUES (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_model`);
     INSERT INTO `employee` (`ID`, `position`, `working_days`) VALUES (`ID`, `position`, `working_days`);
     -- If position is 'Manager', insert data into the table `manager`, else insert data into the table `staff`
     IF `position` = 'Manager' THEN
