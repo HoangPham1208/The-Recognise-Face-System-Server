@@ -10,13 +10,13 @@ const db = mysql.createConnection({
     queueLimit: dbConfig.queueLimit,
 })
 
+// test
 db.connect((error)=>{
     if (error) {
         console.log("Failed to connect to MySQL database ",dbConfig.database," : ",error)
+        return
     }
-    else {
-        console.log('Connected to MySQL database', dbConfig.database)
-    }
+    console.log('Connected to MySQL database', dbConfig.database)
 })
 
 module.exports = db
