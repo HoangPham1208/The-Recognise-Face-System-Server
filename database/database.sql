@@ -19,7 +19,7 @@ CREATE TABLE `account` (
   `phone_num` char(15),
   `status` char(10) NOT NULL,
   `address` char(255),
-  `face_fodel` mediumtext
+  `face_model` mediumtext
 ) ;
 
 -- --------------------------------------------------------
@@ -64,7 +64,21 @@ ALTER TABLE `staff`
 -- --------------------------------------------------------
 -- to be continued
 -- --------------------------------------------------------
+-- Procedure structure for procedure `add_staff`
 -- CALL add_staff('account_name_value', 'password_value');
+
+-- Or CALL add_staff_0(
+--     'account_name_value',
+--     'password_value',
+--     'avatar_value',
+--     'name_value',
+--     'phone_num_value',
+--     'status_value',
+--     'address_value',
+--     'face_model_value',
+--     'position_value',
+--     working_days_value
+-- );
 
 DELIMITER $$
 CREATE PROCEDURE `add_staff_0`(
@@ -75,14 +89,14 @@ CREATE PROCEDURE `add_staff_0`(
   IN p_phone_num CHAR(15),
   IN p_status CHAR(10),
   IN p_address CHAR(255),
-  IN p_face_folder MEDIUMTEXT,
+  IN p_face_model MEDIUMTEXT,
   IN p_position CHAR(255),
   IN p_working_days INT(5)
 )
 BEGIN
   DECLARE account_id INT;
   INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
-  VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_folder);
+  VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
   SET account_id = LAST_INSERT_ID();
   INSERT INTO employee (Id, position, working_days)
   VALUES (account_id, p_position, p_working_days);
@@ -105,7 +119,7 @@ BEGIN
         NULL,  -- phone_num
         'unactive', -- status is default to 'active'
         NULL,  -- address
-        NULL,  -- face_folder
+        NULL,  -- face_model
         NULL,  -- position
         0   -- working_days
     );
