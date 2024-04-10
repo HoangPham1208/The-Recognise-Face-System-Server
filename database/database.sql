@@ -11,25 +11,22 @@ USE `facial_recognition`;
 -- mediumblob -> mediumtext instead for link to image
 --
 CREATE TABLE `account` (
-  `ID` int(10) NOT NULL,
+  `ID` int(10) AUTO_INCREMENT PRIMARY KEY,
   `account_name` char(255) NOT NULL,
   `password` char(255) NOT NULL,
-  `avatar` mediumtext NOT NULL,
-  `name` char(255) NOT NULL,
-  `phone_num` int(15) NOT NULL,
-  `status` tinyint(1) NOT NULL,
-  `address` char(255) NOT NULL,
-  `face_fodel` mediumtext NOT NULL
+  `avatar` mediumtext,
+  `name` char(255),
+  `phone_num` char(15),
+  `status` char(10) NOT NULL,
+  `address` char(255),
+  `face_model` mediumtext
 ) ;
-
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`ID`);
 
 -- --------------------------------------------------------
 -- Table structure for table `employee`
 CREATE TABLE `employee` (
   `Id` int(10) NOT NULL,
-  `position` char(255) NOT NULL,
+  `position` char(255),
   `working_days` int(5) NOT NULL
 ) ;
 
@@ -67,26 +64,70 @@ ALTER TABLE `staff`
 -- --------------------------------------------------------
 -- to be continued
 -- --------------------------------------------------------
--- Insert some data into the table `account`
-INSERT INTO `account` (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_fodel`) VALUES
-(0000000001, 'user_1', '123', 'https://media.istockphoto.com/id/1300845620/vi/vec-to/bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-ng%C6%B0%E1%BB%9Di-d%C3%B9ng-ph%E1%BA%B3ng-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-ng%C6%B0%E1%BB%9Di-d%C3%B9ng-minh-h%E1%BB%8Da-vector.webp?s=1024x1024&w=is&k=20&c=cJE9q0XBXMumQRNYHSfUGEsDQEHhOit5jAioPbVKIjI=', 'Le Van A', '0123456789', '0', 'Ha Noi', 'https://i.pinimg.com/474x/7e/cb/87/7ecb873df3c969d8fce9c915e59233b1.jpg');
+-- Procedure structure for procedure `add_staff`
+-- CALL add_staff('account_name_value', 'password_value');
 
+-- Or CALL add_staff_0(
+--     'account_name_value',
+--     'password_value',
+--     'avatar_value',
+--     'name_value',
+--     'phone_num_value',
+--     'status_value',
+--     'address_value',
+--     'face_model_value',
+--     'position_value',
+--     working_days_value
+-- );
 
--- Procedure `add_employee`:
--- CALL add_employee('ID', 'account_name', 'password', 'avatar', 'name', `phone_num', 'status', 'address', 'face_model', 'position', `working_days`);
 DELIMITER $$
-CREATE PROCEDURE `add_employee` (IN `ID` INT, IN `account_name` CHAR(255), IN `password` CHAR(255), IN `avatar` MEDIUMTEXT, IN `name` CHAR(255), IN `phone_num` INT, IN `status` TINYINT, IN `address` CHAR(255), IN `face_fodel` MEDIUMTEXT, IN `position` CHAR(255), IN `working_days` INT)
+CREATE PROCEDURE `add_staff_0`(
+  IN p_account_name CHAR(255),
+  IN p_password CHAR(255),
+  IN p_avatar MEDIUMTEXT,
+  IN p_name CHAR(255),
+  IN p_phone_num CHAR(15),
+  IN p_status CHAR(10),
+  IN p_address CHAR(255),
+  IN p_face_model MEDIUMTEXT,
+  IN p_position CHAR(255),
+  IN p_working_days INT(5)
+)
 BEGIN
-    INSERT INTO `account` (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_model`) VALUES (`ID`, `account_name`, `password`, `avatar`, `name`, `phone_num`, `status`, `address`, `face_model`);
-    INSERT INTO `employee` (`ID`, `position`, `working_days`) VALUES (`ID`, `position`, `working_days`);
-    -- If position is 'Manager', insert data into the table `manager`, else insert data into the table `staff`
-    IF `position` = 'Manager' THEN
-        INSERT INTO `manager` (`ID`) VALUES (`ID`);
-    ELSE
-        INSERT INTO `staff` (`ID`) VALUES (`ID`);
-    END IF;
+  DECLARE account_id INT;
+  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
+  VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
+  SET account_id = LAST_INSERT_ID();
+  INSERT INTO employee (Id, position, working_days)
+  VALUES (account_id, p_position, p_working_days);
+  INSERT INTO staff (ID)
+  VALUES (account_id);
 END$$
 DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `add_staff`(
+    IN p_account_name CHAR(255),
+    IN p_password CHAR(255)
+)
+BEGIN
+    CALL add_staff_0(
+        p_account_name, 
+        p_password, 
+        NULL,  -- avatar
+        NULL,  -- name
+        NULL,  -- phone_num
+        'unactive', -- status is default to 'active'
+        NULL,  -- address
+        NULL,  -- face_model
+        NULL,  -- position
+        0   -- working_days
+    );
+END$$
+DELIMITER ;
+
+
+
 
 
 
