@@ -1,10 +1,9 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var authController = require('../controller/authController')
+var authController = require("../controller/authController");
+const verifyToken = require("../middleware/authentication");
 
 /* GET home page. */
-router.post('/login', authController.login)
-router.get('/register', function(req,res,next){
-    res.json('logout')
-});
+router.post("/login", authController.login);
+// router.post("/register", verifyToken, authController.register); 
 module.exports = router;
