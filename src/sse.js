@@ -1,10 +1,18 @@
-var express = require('express');
-var router = express.Router();
+var express = require("express");
+var sse = express.Router();
 
-router.get('/progress',(req,res) => {
-    res.set("Content-Type","text/event-stream")
-    let progress = 0
-    res.write('hello')
+var flag = true;
+
+sse.get("/progress", (req, res) => {
+  res.set("Content-Type", "text/event-stream");
+  let progress = 0;
+  setInterval(() => {
+    // runs every 2 seconds
+    res.write(String(flag));
+  }, 2000);
 });
+function setFlag(){
+    flag = !flag
+}
 
-module.exports = router
+module.exports = { sse, setFlag };

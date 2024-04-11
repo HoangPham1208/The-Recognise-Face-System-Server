@@ -18,4 +18,26 @@ module.exports = {
       });
     });
   },
+  register: async (account_name) => {
+    return new Promise((resolve, reject) => {
+      const sql = "CALL add_employee(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      const params = [
+        "'ID'",
+        "'account_name'",
+        "'password'",
+        "'avatar'",
+        "'name'",
+        "'phone_num'",
+        "'status'",
+        "'address'",
+        "'face_model'",
+        "'position'",
+        "'working_days'",
+      ];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        resolve(true);
+      });
+    });
+  },
 };
