@@ -5,11 +5,11 @@ DROP SCHEMA IF EXISTS `facial_recognition`;
 CREATE SCHEMA IF NOT EXISTS `facial_recognition`;
 USE `facial_recognition`;
 -- --------------------------------------------------------
---
 -- Table structure for table `account`
 -- Added `account_name` and `password` columns
 -- mediumblob -> mediumtext instead for link to image
---
+-- tinyint(1) -> char(10) for status\
+
 CREATE TABLE `account` (
   `ID` int(10) AUTO_INCREMENT PRIMARY KEY,
   `account_name` char(255) NOT NULL,
@@ -24,6 +24,7 @@ CREATE TABLE `account` (
 
 -- --------------------------------------------------------
 -- Table structure for table `employee`
+
 CREATE TABLE `employee` (
   `Id` int(10) NOT NULL,
   `position` char(255),
@@ -38,7 +39,7 @@ ALTER TABLE `employee`
 
 -- --------------------------------------------------------
 -- Table structure for table `manager`
---
+
 CREATE TABLE `manager` (
   `ID` int(10) NOT NULL
 ) ;
@@ -51,6 +52,7 @@ ALTER TABLE `manager`
 
 -- --------------------------------------------------------
 -- Table structure for table `staff`
+
 CREATE TABLE `staff` (
   `ID` int(10) NOT NULL
 ) ;
@@ -63,6 +65,7 @@ ALTER TABLE `staff`
 
 -- --------------------------------------------------------
 -- Table structure for table `form`
+
 CREATE TABLE `form` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `Type` char(255),
@@ -73,7 +76,7 @@ CREATE TABLE `form` (
 
 -- --------------------------------------------------------
 -- Table structure for table `request`
---
+
 CREATE TABLE `request` (
   `manager_ID` int(10) NOT NULL,
   `staff_ID` int(10) NOT NULL,
@@ -259,6 +262,25 @@ BEGIN
     VALUES (p_manager_id, p_staff_id, form_id);
 END$$
 DELIMITER ;
+
+-- --------------------------------------------------------
+-- Procedure structure for procedure `update_info` for a staff: update phone_num, address and avatar
+-- CALL update_info('staff_id', 'phone_num', 'address', 'avatar')
+
+DELIMITER $$
+CREATE PROCEDURE `update_info`(
+    IN p_staff_id INT,
+    IN p_phone_num CHAR(15),
+    IN p_address CHAR(255),
+    IN p_avatar MEDIUMTEXT
+)
+BEGIN
+    UPDATE account
+    SET phone_num = p_phone_num, address = p_address, avatar = p_avatar
+    WHERE ID = p_staff_id;
+END$$
+DELIMITER ;
+
 
 
 
