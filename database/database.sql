@@ -48,7 +48,7 @@ ALTER TABLE `manager`
   ADD PRIMARY KEY (`ID`);
 
 ALTER TABLE `manager`
-    ADD CONSTRAINT `manager_FK_1` FOREIGN KEY (`ID`) REFERENCES `account` (`ID`);
+    ADD CONSTRAINT `manager_FK_1` FOREIGN KEY (`ID`) REFERENCES `employee` (`ID`);
 
 -- --------------------------------------------------------
 -- Table structure for table `staff`
@@ -61,7 +61,7 @@ ALTER TABLE `staff`
   ADD PRIMARY KEY (`ID`);
 
 ALTER TABLE `staff`
-    ADD CONSTRAINT `staff_FK_1` FOREIGN KEY (`ID`) REFERENCES `account` (`ID`);
+    ADD CONSTRAINT `staff_FK_1` FOREIGN KEY (`ID`) REFERENCES `employee` (`ID`);
 
 -- --------------------------------------------------------
 -- Table structure for table `form`
@@ -70,7 +70,7 @@ CREATE TABLE `form` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `Type` char(255),
   `date_time` datetime,
-  `status` char(255),
+  `status` char(10),
   `note` text
 ) ;
 
@@ -91,12 +91,114 @@ ALTER TABLE `request`
   ADD CONSTRAINT `request_FK_2` FOREIGN KEY (`Staff_ID`) REFERENCES `staff` (`ID`),
   ADD CONSTRAINT `request_FK_3` FOREIGN KEY (`Form_ID`) REFERENCES `form` (`ID`);
 -- --------------------------------------------------------
--- to be continued
+-- Table structure for table `announcement`
 
+CREATE TABLE `announcement` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `send_by` int(10) NOT NULL,
+  `date_time` datetime NOT NULL,
+  `descripttion` text
+) ;
 
+-- --------------------------------------------------------
+-- Table structure for table `has_announcement`
 
+CREATE TABLE `has_announcement` (
+  `announcement_ID` int(10) NOT NULL,
+  `employee_ID` int(10) NOT NULL
+) ;
 
+ALTER TABLE `has_announcement`
+  ADD PRIMARY KEY (`announcement_ID`, `employee_ID`);
 
+ALTER TABLE `has_announcement`
+  ADD CONSTRAINT `has_announcement_FK_1` FOREIGN KEY (`announcement_ID`) REFERENCES `announcement` (`ID`),
+  ADD CONSTRAINT `has_announcement_FK_2` FOREIGN KEY (`employee_ID`) REFERENCES `employee` (`ID`);
+
+-- --------------------------------------------------------
+-- Table structure for table `iot_device`
+
+CREATE TABLE `iot_device` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` char(255),
+  `status` char(10) NOT NULL,
+  `location` char(255),
+  `role` char(255)
+) ;
+
+-- --------------------------------------------------------
+-- Table structure for table `iot_data`
+
+CREATE TABLE `iot_data` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `date_time` datetime NOT NULL,
+  `value` mediumblob,
+  `device_ID` int(10) NOT NULL
+) ;
+
+-- ALTER TABLE `iot_data`
+--   ADD PRIMARY KEY (`ID`, `device_ID`);
+
+ALTER TABLE `iot_data`
+  ADD CONSTRAINT `iot_data_FK` FOREIGN KEY (`device_ID`) REFERENCES `iot_device` (`ID`);
+-- --------------------------------------------------------
+-- Table structure for table `OTP`
+
+CREATE TABLE `OTP` (
+  `code` int(6) NOT NULL,
+  `status` char(10) NOT NULL,
+  `account_ID` int(10) NOT NULL PRIMARY KEY
+) ;
+
+ALTER TABLE `OTP`
+  ADD CONSTRAINT `OTP_FK` FOREIGN KEY (`account_ID`) REFERENCES `account` (`ID`);
+
+-- --------------------------------------------------------
+-- Table structure for table `working_time`
+
+CREATE TABLE `working_time` (
+  `ID` int(10) NOT NULL,
+  `begin_at` time NOT NULL,
+  `end_at` time NOT NULL
+);
+
+ALTER TABLE `working_time`
+  ADD PRIMARY KEY (`ID`, `begin_at`, `end_at`);
+
+ALTER TABLE `working_time`
+  ADD CONSTRAINT `working_time_FK` FOREIGN KEY (`ID`) REFERENCES `employee` (`ID`);
+
+-- --------------------------------------------------------
+-- Table structure for table `tracking_work_days`
+
+CREATE TABLE `tracking_work_days` (
+  `date` date NOT NULL,
+  `total_hour` int(3) NOT NULL,
+  `status` char(10) NOT NULL,
+  `employee_ID` int(10) NOT NULL
+) ;
+
+ALTER TABLE `tracking_work_days`
+  ADD PRIMARY KEY (`date`, `employee_ID`);
+
+ALTER TABLE `tracking_work_days`
+  ADD CONSTRAINT `tracking_work_days_FK` FOREIGN KEY (`employee_ID`) REFERENCES `employee` (`ID`);
+
+-- --------------------------------------------------------
+-- Table structure for table `time_status`
+
+CREATE TABLE `time_status` (
+  `date` date NOT NULL PRIMARY KEY,
+  `time` time NOT NULL,
+  `status` char(10) NOT NULL,
+  `type` char(10) NOT NULL
+) ;
+
+ALTER TABLE `time_status`
+  ADD CONSTRAINT `time_status_FK` FOREIGN KEY (`date`) REFERENCES `tracking_work_days` (`date`);
+
+-- --------------------------------------------------------
+-- to be continued ?
 
 
 -- --------------------------------------------------------
