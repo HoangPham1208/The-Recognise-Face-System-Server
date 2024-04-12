@@ -233,7 +233,7 @@ CREATE PROCEDURE `add_staff_0`(
 )
 BEGIN
   DECLARE account_id INT;
-  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
+  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_model)
   VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
   SET account_id = LAST_INSERT_ID();
   INSERT INTO employee (ID, position, working_days)
@@ -294,7 +294,7 @@ CREATE PROCEDURE `add_manager_0`(
 )
 BEGIN
   DECLARE account_id INT;
-  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
+  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_model)
   VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
   SET account_id = LAST_INSERT_ID();
   INSERT INTO employee (ID, position, working_days)
@@ -338,13 +338,23 @@ CREATE PROCEDURE `send_form`(
 )
 BEGIN
     DECLARE form_id INT;
-    INSERT INTO form (Type, date_time, status, note)
-    VALUES ('Send Form', NOW(), 'pending', p_form_note);
-    SET form_id = LAST_INSERT_ID();
-    INSERT INTO request (manager_ID, staff_ID, form_ID)
-    VALUES (p_manager_id, p_staff_id, form_id);
+    DECLARE manager_exists INT;
+    DECLARE staff_exists INT;
+
+    SELECT COUNT(*) INTO manager_exists FROM manager WHERE ID = p_manager_id;
+    SELECT COUNT(*) INTO staff_exists FROM staff WHERE ID = p_staff_id;
+    IF manager_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager ID does not exist';
+    ELSEIF staff_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Staff ID does not exist';
+    ELSE
+        INSERT INTO form (Type, date_time, status, note)
+        VALUES ('Send Form', NOW(), 'pending', p_form_note);
+        SET form_id = LAST_INSERT_ID();
+        INSERT INTO request (manager_ID, staff_ID, form_ID)
+        VALUES (p_manager_id, p_staff_id, form_id);
+    END IF;
 END$$
-DELIMITER ;
 
 -- Procedure structure for procedure `respond_form`
 -- CALL respond_form('manager_id', 'staff_id', 'response_note')
@@ -357,32 +367,74 @@ CREATE PROCEDURE `respond_form`(
 )
 BEGIN
     DECLARE form_id INT;
-    INSERT INTO form (Type, date_time, status, note)
-    VALUES ('Respond Form', NOW(), 'pending', p_form_note);
-    SET form_id = LAST_INSERT_ID();
-    INSERT INTO request (manager_ID, staff_ID, form_ID)
-    VALUES (p_manager_id, p_staff_id, form_id);
+    DECLARE manager_exists INT;
+    DECLARE staff_exists INT;
+
+    SELECT COUNT(*) INTO manager_exists FROM manager WHERE ID = p_manager_id;
+    SELECT COUNT(*) INTO staff_exists FROM staff WHERE ID = p_staff_id;
+    IF manager_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager ID does not exist';
+    ELSEIF staff_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Staff ID does not exist';
+    ELSE
+        INSERT INTO form (Type, date_time, status, note)
+        VALUES ('Respond Form', NOW(), 'pending', p_form_note);
+        SET form_id = LAST_INSERT_ID();
+        INSERT INTO request (manager_ID, staff_ID, form_ID)
+        VALUES (p_manager_id, p_staff_id, form_id);
+    END IF;
 END$$
 DELIMITER ;
-
 -- --------------------------------------------------------
 -- Procedure structure for procedure `update_info` for a staff: update phone_num, address and avatar
 -- CALL update_info('staff_id', 'phone_num', 'address', 'avatar')
 
 DELIMITER $$
 CREATE PROCEDURE `update_info`(
-    IN p_staff_id INT,
+    IN p_account_id INT,
     IN p_phone_num CHAR(15),
     IN p_address CHAR(255),
     IN p_avatar MEDIUMTEXT
 )
 BEGIN
-    UPDATE account
-    SET phone_num = p_phone_num, address = p_address, avatar = p_avatar
-    WHERE ID = p_staff_id;
+    DECLARE account_exists INT;
+    SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
+
+    IF account_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+    ELSE
+        UPDATE account
+        SET phone_num = p_phone_num, address = p_address, avatar = p_avatar
+        WHERE ID = p_account_id;
+    END IF;
 END$$
 DELIMITER ;
 
+
+
+-- --------------------------------------------------------
+-- Insert some data
+-- CALL add_staff('staff1', 'password');
+-- CALL add_staff('staff2', 'password');
+-- CALL add_staff('staff3', 'password');
+
+-- CALL add_manager('manager1', 'password');
+-- CALL add_manager('manager2', 'password');
+-- CALL add_manager('manager3', 'password');
+
+-- CALL send_form(4, 1, 'send form 1');
+-- CALL send_form(5, 2, 'send form 2');
+-- CALL send_form(6, 3, 'send form 3');
+
+-- CALL respond_form(4, 1, 'respond form 1');
+-- CALL respond_form(5, 2, 'respond form 2');
+-- CALL respond_form(6, 3, 'respond form 3');
+
+-- CALL update_info(1, '0123456789', 'address 1', 'images/avatar 1.png');
+-- CALL update_info(2, '0123456789', 'address 2', 'images/avatar 2.png');
+-- CALL update_info(3, '0123456789', 'address 3', 'images/avatar 3.png');
+
+-- --------------------------------------------------------
 
 
 
