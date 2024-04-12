@@ -26,13 +26,13 @@ CREATE TABLE `account` (
 -- Table structure for table `employee`
 
 CREATE TABLE `employee` (
-  `Id` int(10) NOT NULL,
+  `ID` int(10) NOT NULL,
   `position` char(255),
   `working_days` int(5) NOT NULL
 ) ;
 
 ALTER TABLE `employee`
-  ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`ID`);
 
 ALTER TABLE `employee`
   ADD CONSTRAINT `employee_FK_1` FOREIGN KEY (`ID`) REFERENCES `account` (`ID`);
@@ -87,9 +87,9 @@ ALTER TABLE `request`
   ADD PRIMARY KEY (`manager_ID`, `staff_ID`, `form_ID`);
 
 ALTER TABLE `request`
-  ADD CONSTRAINT `request_FK_1` FOREIGN KEY (`Manager_Id`) REFERENCES `manager` (`Id`),
-  ADD CONSTRAINT `request_FK_2` FOREIGN KEY (`Staff_Id`) REFERENCES `staff` (`Id`),
-  ADD CONSTRAINT `request_FK_3` FOREIGN KEY (`Form_Id`) REFERENCES `form` (`Id`);
+  ADD CONSTRAINT `request_FK_1` FOREIGN KEY (`Manager_ID`) REFERENCES `manager` (`ID`),
+  ADD CONSTRAINT `request_FK_2` FOREIGN KEY (`Staff_ID`) REFERENCES `staff` (`ID`),
+  ADD CONSTRAINT `request_FK_3` FOREIGN KEY (`Form_ID`) REFERENCES `form` (`ID`);
 -- --------------------------------------------------------
 -- to be continued
 
@@ -134,7 +134,7 @@ BEGIN
   INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
   VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
   SET account_id = LAST_INSERT_ID();
-  INSERT INTO employee (Id, position, working_days)
+  INSERT INTO employee (ID, position, working_days)
   VALUES (account_id, p_position, p_working_days);
   INSERT INTO staff (ID)
   VALUES (account_id);
@@ -195,7 +195,7 @@ BEGIN
   INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_fodel)
   VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
   SET account_id = LAST_INSERT_ID();
-  INSERT INTO employee (Id, position, working_days)
+  INSERT INTO employee (ID, position, working_days)
   VALUES (account_id, p_position, p_working_days);
   INSERT INTO manager (ID)
   VALUES (account_id);
@@ -248,7 +248,7 @@ DELIMITER ;
 -- CALL respond_form('manager_id', 'staff_id', 'response_note')
 
 DELIMITER $$
-CREATE PROCEDURE `send_form`(
+CREATE PROCEDURE `respond_form`(
     IN p_manager_id INT,
     IN p_staff_id INT,
     IN p_form_note TEXT
