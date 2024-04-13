@@ -12,7 +12,7 @@ module.exports = {
       })
     }
     try {
-      const account = await authModel.getHashPassword(account_name)
+      const account = await authModel.getUser(account_name)
       const isValidPassword = await bcryptjs.compareSync(
         password,
         account.password

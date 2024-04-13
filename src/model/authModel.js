@@ -2,7 +2,7 @@ const db = require('../database/dbConnect')
 const jwt = require('jsonwebtoken')
 
 module.exports = {
-  getHashPassword: async (account_name) => {
+  getUser: async (account_name) => {
     return new Promise((resolve, reject) => {
       let sql = `SELECT * FROM account WHERE account_name = ?`
       let params = [account_name]
