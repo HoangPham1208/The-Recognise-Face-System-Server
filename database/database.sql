@@ -410,6 +410,65 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- --------------------------------------------------------
+-- Procedure for add_OTP
+-- CALL add_OTP('account_id', 'code')
+
+DELIMITER $$
+CREATE PROCEDURE `add_OTP`(
+    IN p_account_id INT,
+    IN p_code INT
+)
+BEGIN
+    DECLARE account_exists INT;
+    SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
+
+    IF account_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+    ELSE
+        INSERT INTO OTP (code, status, account_ID)
+        VALUES (p_code, 'unactive', p_account_id);
+    END IF;
+END$$
+DELIMITER ;
+
+-- CALL set_OTP_active('account_id')
+DELIMITER $$
+CREATE PROCEDURE `set_OTP_active`(
+    IN p_account_id INT
+)
+BEGIN
+    DECLARE account_exists INT;
+    SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
+
+    IF account_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+    ELSE
+        UPDATE OTP
+        SET status = 'active'
+        WHERE account_ID = p_account_id;
+    END IF;
+END$$
+DELIMITER ;
+
+-- CALL set_OTP_inactive('account_id')
+DELIMITER $$
+CREATE PROCEDURE `set_OTP_inactive`(
+    IN p_account_id INT
+)
+BEGIN
+    DECLARE account_exists INT;
+    SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
+
+    IF account_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+    ELSE
+        UPDATE OTP
+        SET status = 'unactive'
+        WHERE account_ID = p_account_id;
+    END IF;
+END$$
+DELIMITER ;
 
 
 -- --------------------------------------------------------
