@@ -22,9 +22,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Route in routes
 Router(app);
 
-const port = 3000;
-
-// web socket 
+const port = 4000;
+const verifyToken = require("../../middleware/authentication");
+// only for test
+app.get("/test", verifyToken, function (req, res) {
+  console.log(req.user)
+  res.json({msg:"hee"})
+});
+// web socket
 
 app.listen(port, () => {
   console.log(`Our server is running on port ${port}`);

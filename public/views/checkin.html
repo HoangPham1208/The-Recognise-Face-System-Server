@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     <script defer src="../javascripts/face-api.min.js"></script>
-    <script defer src="../javascripts/script-checkin.js"></script>
+    <script type="module" defer src="../javascripts/script-checkin.js"></script>
     <style>
       body {
         margin: 0;
@@ -30,8 +30,8 @@
     <video id="video" width="720" height="560" autoplay="true"></video>
     <section id="REC">
       <p>Are you <span id="recognizedInfo"></span>?</p>
-      <button onclick="checkin()">YES</button>
-      <button onclick="reset()">NO</button>
+      <button onclick="window.checkin()">YES</button>
+      <button onclick="window.reset()">NO</button>
     </section>
   </body>
 </html>

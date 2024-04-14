@@ -4,16 +4,13 @@ module.exports = {
     const server = require("http").Server(app);
     const io = require("socket.io")(server, {
       cors: {
-        origin: "http://localhost:3002", // iot server
+        origin: "http://localhost:4002", // iot server
         methods: ["GET", "POST"],
       },
     });
-    app.get("/socket", function (req, res) {
-        res.sendFile(path.join(__dirname, "../../../public/views/socket.html"));
-      });
       
-    server.listen(3003, () => {
-      console.log("Listening on http://localhost:3003");
+    server.listen(4003, () => {
+      console.log("Websocket server for IoT is running on port 3003");
     });
 
     io.on("connection", (socket) => {
@@ -32,9 +29,8 @@ module.exports = {
         console.log("Nhan du lieu tu channel: ", arg); // world
       });
     });
-    setInterval(() => {
-      io.to("example-channel").emit("message", "Hello from channel 1!");
-      io.to("channel2").emit("message", "Hello from channel 2!");
-    }, 1000);
+    // setInterval(() => {
+    //   io.to("example-channel").emit("message", "Hello from channel 1!");
+    // }, 1000);
   },
 };
