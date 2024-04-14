@@ -12,13 +12,14 @@
         console.log("connected to server");
 
         //Subscribe to the "example-channel"
-        socket.emit("subscribe", "example-channel");
+        socket.emit("subscribe", "channel1");
 
         //Listen for messages from the "example-channel"
-        socket.on("message", function (message) {
-          console.log("received message:", message);
-        });
+        
       });
+      socket.emit("send","hello")
+      
+
     </script>
   </head>
   <body>

@@ -25,4 +25,39 @@ const getUser = async (account_ID) => {
     })
   })
 }
-module.exports = { updateInfo, getUser }
+const createOtp = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL create_OTP(?)`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
+      resolve(result)
+    })
+  })
+}
+const deleteOtp = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL delete_OTP(?)`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
+
+      resolve(true)
+    })
+  })
+}
+const getOtp = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT code FROM OTP WHERE account_ID = ?`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
+      if (result.length) {
+        resolve(result[0])
+      } else {
+        resolve(false)
+      }
+    })
+  })
+}
+module.exports = { updateInfo, getUser, getOtp, deleteOtp, createOtp }
