@@ -443,7 +443,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE `create_OTP`(
     IN p_account_id INT
-)
+) RETURN CHAR(6)
 BEGIN
     DECLARE account_exists INT;
     DECLARE OTP_exists INT;
@@ -471,6 +471,7 @@ BEGIN
             SET OTP_status = 'active';
             INSERT INTO OTP (code, status, account_ID)
             VALUES (OTP_code, OTP_status, p_account_id);
+            RETURN OTP_code;
         ELSE
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
         END IF;
