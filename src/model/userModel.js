@@ -21,63 +21,42 @@ const getUser = async (account_name) => {
       } else {
         resolve(false);
       }
-    });
-  });
-};
+    })
+  })
+}
+const createOtp = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL create_OTP(?)`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
+      resolve(result)
+    })
+  })
+}
+const deleteOtp = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `CALL delete_OTP(?)`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
 
-// pending - wait for DB
-const getAttendanceTrack = async (user_id, date_time) => {
+      resolve(true)
+    })
+  })
+}
+const getOtp = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `
-    SELECT 'name','position','date','time','status','type','
-    FROM accoun WHERE ID = ?`;
-    const params = [account_ID];
+    const sql = `SELECT code FROM OTP WHERE account_ID = ?`
+    const params = [account_ID]
     db.query(sql, params, (err, result) => {
-      if (err) reject(err);
-      console.log(result);
+      if (err) reject(err)
       if (result.length) {
-        resolve(result[0]);
+        resolve(result[0])
       } else {
-        resolve(false);
+        resolve(false)
       }
-    });
-  });
-};
-
-// pending - wait for DB
-const getEmployeeDetails = async (user_id) => {
-  return new Promise((resolve, reject) => {
-    const sql = `
-    SELECT 'name','position','date','time','status','type','
-    FROM accoun WHERE ID = ?`;
-    const params = [account_ID];
-    db.query(sql, params, (err, result) => {
-      if (err) reject(err);
-      console.log(result);
-      if (result.length) {
-        resolve(result[0]);
-      } else {
-        resolve(false);
-      }
-    });
-  });
-};
-// pending - wait for DB
-const getAnnouncement = async (user_id) => {
-  return new Promise((resolve, reject) => {
-    const sql = `
-    SELECT 'name','position','date','time','status','type','
-    FROM accoun WHERE ID = ?`;
-    const params = [account_ID];
-    db.query(sql, params, (err, result) => {
-      if (err) reject(err);
-      console.log(result);
-      if (result.length) {
-        resolve(result[0]);
-      } else {
-        resolve(false);
-      }
-    });
-  });
-};
-module.exports = { updateInfo, getUser, getAttendanceTrack, getEmployeeDetails, getAnnouncement };
+    })
+  })
+}
+module.exports = { updateInfo, getUser, getOtp, deleteOtp, createOtp }
