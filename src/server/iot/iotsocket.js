@@ -4,12 +4,12 @@ module.exports = {
     const server = require("http").Server(app);
     const io = require("socket.io")(server, {
       cors: {
-        origin: "http://localhost:3002", // iot server
+        origin: "http://localhost:4002", // iot server
         methods: ["GET", "POST"],
       },
     });
       
-    server.listen(3003, () => {
+    server.listen(4003, () => {
       console.log("Websocket server for IoT is running on port 3003");
     });
 

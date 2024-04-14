@@ -1,5 +1,5 @@
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-const socket = io("http://localhost:3003");
+const socket = io("http://localhost:4003");
 socket.on("connect", function () {
   console.log("connected to server");
 

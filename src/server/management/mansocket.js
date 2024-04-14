@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const ws = new WebSocket("ws://localhost:3000");
+const ws = new WebSocket("ws://localhost:4001");
 function setupWebSocketServer(port) {
   ws.on("error", console.error);
 

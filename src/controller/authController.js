@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 module.exports = {
   login: async (req, res) => {
+    console.log(req.user)
     const { account_name, password } = req.body
     if (!account_name || !password) {
       return res.status(400).json({
@@ -21,6 +22,7 @@ module.exports = {
       //   return res.status(401).json({ status: 'Authentication failed' })
       // }
       const token = jwt.sign({ id: account.ID }, process.env.SECRET_TOKEN)
+      console.log(token)
       const { password: pass, ...tem } = account
       res
         .cookie('access_token', token, {
