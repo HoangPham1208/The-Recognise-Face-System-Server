@@ -1,16 +1,29 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Demo Socketio - Homepage</title>
-
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
     <script type="module">
-        import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-        const socket = io();
-      </script>
-  </head>
+      import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+      const socket = io("http://localhost:3003");
+      socket.on("connect", function () {
+        console.log("connected to server");
 
+        socket.emit("subscribe", "example-channel");
+
+        //Listen for messages from the "example-channel"
+        socket.on("message", function (message) {
+          console.log("received message:", message);
+        });
+        setInterval(() => {
+          socket.emit("hello", "world");
+        }, 1000);
+      });
+    </script>
+  </head>
   <body>
-    <div>
-      <button id="send">Send</button>
-    </div>
+    <h1>Hi from Codedamn</h1>
   </body>
 </html>

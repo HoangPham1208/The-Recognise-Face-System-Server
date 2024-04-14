@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --env-file=./src/.env ./src/server.js",
-    "iot": "nodemon --env-file=./src/.env ./src/iotServer.js"
+    "start": "nodemon --env-file=./src/.env ./src/server/management/server.js",
+    "iot": "nodemon --env-file=./src/.env ./src/server/iot/iotserver.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
