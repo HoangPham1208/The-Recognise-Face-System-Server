@@ -25,12 +25,6 @@ Router(app);
 const port = 3000;
 
 // web socket 
-// var server = require("http").Server(app);
-
-// var io = require("socket.io")(server);
-
-
-
 
 app.listen(port, () => {
   console.log(`Our server is running on port ${port}`);
