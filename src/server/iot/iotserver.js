@@ -59,33 +59,8 @@ app.get("/labeled", function (req, res) {
 const port = 3002;
 
 // web socket 
-app.get("/socket", function (req, res) {
-  res.sendFile(path.join(__dirname, "../../../public/views/socket.html"));
-});
-
-var server = require("http").Server(app);
-
-var io = require("socket.io")(server);
-
-
-io.on("connection", function(socket) {
-
-  socket.on("disconnect", function() {});
-
-  //server lắng nghe dữ liệu từ client
-
-  socket.on("Client-sent-data", function(data) {
-
-      //sau khi lắng nghe dữ liệu, server phát lại dữ liệu này đến các client khác
-
-      console.log('client send data', data);
-
-      socket.emit("Server-sent-data", data);
-
-  });
-
-});
-
+const {iotSocket} = require('./iotsocket')
+iotSocket(app)
 
 
 app.listen(port, () => {
