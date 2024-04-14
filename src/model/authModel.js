@@ -1,43 +1,30 @@
-const db = require("../database/dbConnect");
-const jwt = require("jsonwebtoken");
+const db = require('../database/dbConnect')
+const jwt = require('jsonwebtoken')
 
 module.exports = {
-  login: async (account_name, password) => {
+  getUser: async (account_name) => {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * FROM account WHERE account_name = ? and password = ?`;
-      let params = [account_name, password];
+      let sql = `SELECT * FROM account WHERE account_name = ?`
+      let params = [account_name]
       db.query(sql, params, (error, result) => {
-        if (error) reject(error);
+        if (error) reject(error)
+        console.log(result)
         if (result.length) {
-          const id = result[0].ID;
-          const token = jwt.sign({ id }, process.env.SECRET_TOKEN, {
-            expiresIn: "24h",
-          });
-          resolve(token);
-        } else resolve(false);
-      });
-    });
+          resolve(result[0])
+        } else {
+          resolve(false)
+        }
+      })
+    })
   },
-  register: async (account_name) => {
+  register: async (account_name, password) => {
     return new Promise((resolve, reject) => {
-      const sql = "CALL add_employee(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      const params = [
-        "'ID'",
-        "'account_name'",
-        "'password'",
-        "'avatar'",
-        "'name'",
-        "'phone_num'",
-        "'status'",
-        "'address'",
-        "'face_model'",
-        "'position'",
-        "'working_days'",
-      ];
+      const sql = 'CALL add_staff(?, ?)'
+      const params = [account_name, password]
       db.query(sql, params, (error, result) => {
-        if (error) reject(error);
-        resolve(true);
-      });
-    });
+        if (error) reject(error)
+        resolve(true)
+      })
+    })
   },
-};
+}
