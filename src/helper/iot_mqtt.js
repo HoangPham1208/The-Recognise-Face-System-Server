@@ -75,6 +75,7 @@ async function setup() {
     setInterval(processData, 1000); // CHECK DATA Received FROM MICRO:BIT
   } catch (error) {
     console.error("Error setting up:", error);
+    console.error("No connected to IoT Device")
   }
 }
 

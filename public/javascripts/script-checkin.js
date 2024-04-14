@@ -1,3 +1,19 @@
+import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+const socket = io("http://localhost:3003");
+socket.on("connect", function () {
+  console.log("connected to server");
+
+  // socket.emit("subscribe", "example-channel");
+
+  //Listen for messages from the "example-channel"
+  socket.on("message", function (message) {
+    console.log("received message:", message);
+  });
+  // setInterval(() => {
+  //   socket.emit("hello", "world");
+  // }, 1000);
+});
+
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
   // faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
@@ -7,6 +23,7 @@ Promise.all([
   faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
   faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
 ]).then(startVideo);
+let information;
 
 async function startVideo() {
   // first loading data
@@ -21,7 +38,6 @@ async function startVideo() {
 
   const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
-  var information
   video.addEventListener("play", () => {
     const canvas = faceapi.createCanvasFromMedia(video); // got canvas
     document.body.append(canvas);
@@ -35,8 +51,9 @@ async function startVideo() {
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
       if (resizedDetections.length != 0) {
         const res = faceMatcher.findBestMatch(resizedDetections[0].descriptor);
-        information = res
-        document.getElementById("recognizedInfo").innerText = information._label;
+        information = res;
+        document.getElementById("recognizedInfo").innerText =
+          information._label;
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
         faceapi.draw.drawDetections(canvas, resizedDetections);
         const box = resizedDetections[0].detection.box;
@@ -44,8 +61,7 @@ async function startVideo() {
           label: res.toString(),
         });
         drawBox.draw(canvas);
-      }
-      else{
+      } else {
         document.getElementById("recognizedInfo").innerText = "No one";
       }
       // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
@@ -101,10 +117,13 @@ async function fetchData(url) {
   }
 }
 
-function checkin(){
-  console.log(123)
+function checkin() {
+  console.log(123);
 }
-function reset(){
-  information = ""
-  alert("Vui long roi khoi tam cua camera va quet lai!")
+function reset() {
+  information = "";
+  alert("Vui long roi khoi tam cua camera va quet lai!");
 }
+
+window.checkin = checkin
+window.reset = reset

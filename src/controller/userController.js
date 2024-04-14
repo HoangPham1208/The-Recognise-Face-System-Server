@@ -3,8 +3,8 @@
 //     return res.status(401).json({status: 'error',message: 'You can only generate your otp!'})
 //   try {
 //     const otp = Math.floor(1000 + Math.random() * 9000)
-const bcryptjs = require('bcryptjs')
-const { updateInfo, getUser } = require('../model/userModel.js')
+const bcryptjs = require("bcryptjs");
+const userModel = require("../model/userModel.js");
 
 //   } catch (error) {
 //     return res.status(500).json({ status: 'error', message: error.message })
@@ -29,29 +29,90 @@ const { updateInfo, getUser } = require('../model/userModel.js')
 // }
 
 const updateUser = async (req, res) => {
-  req.params.id = parseInt(req.params.id)
+  req.params.id = parseInt(req.params.id);
   if (req.user.id !== req.params.id) {
     return res
       .status(401)
-      .json({ status: 'error', message: 'You can only update your account' })
+      .json({ status: "error", message: "You can only update your account" });
   }
   try {
     if (req.body.password) {
-      req.body.password = bcryptjs.hashSync(req.body.password, 10)
+      req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
-    const isUpdatedUser = await updateInfo(
+    const isUpdatedUser = await userModel.updateInfo(
       req.user.id,
       req.body.password,
       req.body.phone_num,
       req.body.address,
       req.body.avatar
-    )
-    const updatedUser = await getUser(req.user.id)
-    const { password, ...rest } = updatedUser
-    res.status(200).json({ status: 'ok', message: rest })
+    );
+    const updatedUser = await userModel.getUser(req.user.id);
+    const { password, ...rest } = updatedUser;
+    res.status(200).json({ status: "ok", message: rest });
   } catch (err) {
-    return res.status(500).json({ status: 'error', message: err.message })
+    return res.status(500).json({ status: "error", message: err.message });
   }
-}
+};
 
-module.exports = { updateUser }
+// pending
+const getAttendanceTrack = async (req, res) => {
+  const user_id = req.user
+  const {date_time } = req.body;
+  if (!user_id || !date_time) {
+    return res.status(400).json({
+      status: "failed",
+      message: "no id or date_time provided",
+    });
+  }
+  try {
+    const result = await userModel.getAttendanceTrack(user_id, date_time);
+    if (result) {
+      return res.status(200).json({ status: "OK" });
+    } else return res.status(401).json({ status: "check_in failed" });
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
+};
+
+// pending
+const getEmployeeDetails = async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id || !date_time) {
+    return res.status(400).json({
+      status: "failed",
+      message: "",
+    });
+  }
+  try {
+    const result = await userModel.getEmployeeDetails(user_id, date_time);
+    if (result) {
+      return res.status(200).json({ status: "OK" });
+    } else return res.status(401).json({ status: "" });
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
+};
+// pending
+const getAnnouncement = async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id || !date_time) {
+    return res.status(400).json({
+      status: "failed",
+      message: "",
+    });
+  }
+  try {
+    const result = await userModel.getAnnouncement(user_id, date_time);
+    if (result) {
+      return res.status(200).json({ status: "OK" });
+    } else return res.status(401).json({ status: "" });
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
+};
+module.exports = {
+  updateUser,
+  getAttendanceTrack,
+  getEmployeeDetails,
+  getAnnouncement,
+};
