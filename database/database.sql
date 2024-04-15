@@ -484,7 +484,6 @@ BEGIN
       INSERT INTO OTP (code, status, account_ID)
       VALUES (OTP_code, OTP_status, p_account_id);
     ELSE
-<<<<<<< Updated upstream
         SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
         IF OTP_exists = 0 THEN
             REPEAT
@@ -505,9 +504,6 @@ BEGIN
         ELSE
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
         END IF;
-=======
-      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
->>>>>>> Stashed changes
     END IF;
   END IF;
 END$$
