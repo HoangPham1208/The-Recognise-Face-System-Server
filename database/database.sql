@@ -445,17 +445,12 @@ BEGIN
 END$$
 DELIMITER ;
 
--- CALL create_OTP('account_id')
+-- SELECT create_OTP('account_id')
 
 DELIMITER $$
-CREATE PROCEDURE `create_OTP`(
-<<<<<<< Updated upstream
-    IN p_account_id INT
-) RETURN CHAR(6)
-=======
-  IN p_account_id INT
-)
->>>>>>> Stashed changes
+CREATE FUNCTION `create_OTP`(
+  p_account_id INT
+) RETURNS CHAR(6)
 BEGIN
   DECLARE account_exists INT;
   DECLARE OTP_exists INT;
@@ -465,49 +460,32 @@ BEGIN
 
   SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
   IF account_exists = 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
   ELSE
-    SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
-    IF OTP_exists = 0 THEN
-      REPEAT
-        SET OTP_code = CONCAT(
-          CHAR(FLOOR(65 + RAND() * 26)),
-          CHAR(FLOOR(65 + RAND() * 26)),
-          CHAR(FLOOR(65 + RAND() * 26)),
-          CHAR(FLOOR(48 + RAND() * 10)),
-          CHAR(FLOOR(48 + RAND() * 10)),
-          CHAR(FLOOR(48 + RAND() * 10))
-        );
-        SET account_has_OTP = (SELECT COUNT(*) FROM OTP WHERE code = OTP_code);
-      UNTIL account_has_OTP = 0 END REPEAT;
-      SET OTP_status = 'active';
-      INSERT INTO OTP (code, status, account_ID)
-      VALUES (OTP_code, OTP_status, p_account_id);
-    ELSE
-        SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
-        IF OTP_exists = 0 THEN
-            REPEAT
-                SET OTP_code = CONCAT(
-                    CHAR(FLOOR(65 + RAND() * 26)),
-                    CHAR(FLOOR(65 + RAND() * 26)),
-                    CHAR(FLOOR(65 + RAND() * 26)),
-                    CHAR(FLOOR(48 + RAND() * 10)),
-                    CHAR(FLOOR(48 + RAND() * 10)),
-                    CHAR(FLOOR(48 + RAND() * 10))
-                );
-                SET account_has_OTP = SELECT COUNT(*) FROM OTP WHERE code = OTP_code;
-            UNTIL account_has_OTP = 0 END REPEAT;
-            SET OTP_status = 'active';
-            INSERT INTO OTP (code, status, account_ID)
-            VALUES (OTP_code, OTP_status, p_account_id);
-            RETURN OTP_code;
-        ELSE
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
-        END IF;
-    END IF;
+      SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
+      IF OTP_exists = 0 THEN
+          REPEAT
+              SET OTP_code = CONCAT(
+                  CHAR(FLOOR(65 + RAND() * 26)),
+                  CHAR(FLOOR(65 + RAND() * 26)),
+                  CHAR(FLOOR(65 + RAND() * 26)),
+                  CHAR(FLOOR(48 + RAND() * 10)),
+                  CHAR(FLOOR(48 + RAND() * 10)),
+                  CHAR(FLOOR(48 + RAND() * 10))
+              );
+              SELECT COUNT(*) INTO account_has_OTP FROM OTP WHERE code = OTP_code;
+          UNTIL account_has_OTP = 0 END REPEAT;
+          SET OTP_status = 'active';
+          INSERT INTO OTP (code, status, account_ID)
+          VALUES (OTP_code, OTP_status, p_account_id);
+          RETURN OTP_code;
+      ELSE
+          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
+      END IF;
   END IF;
 END$$
 DELIMITER ;
+
 
 -- CALL delete_OTP('account_id')
 
@@ -585,9 +563,8 @@ CALL respond_form(4, 1, 'respond form 1');
 CALL respond_form(5, 2, 'respond form 2');
 CALL respond_form(6, 3, 'respond form 3');
 
-CALL update_info(1, '0123456789', 'address 1', 'images/avatar 1.png');
-CALL update_info(2, '0123456789', 'address 2', 'images/avatar 2.png');
-CALL update_info(3, '0123456789', 'address 3', 'images/avatar 3.png');
+CALL update_info(1, 'password', '0123456789', 'address 1', 'images/avatar_1.png');
+
 
 -- --------------------------------------------------------
 
