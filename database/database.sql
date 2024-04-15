@@ -127,21 +127,6 @@ CREATE TABLE `iot_device` (
 ) ;
 
 -- --------------------------------------------------------
--- Table structure for table `iot_data`
-
-CREATE TABLE `iot_data` (
-  `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `date_time` datetime NOT NULL,
-  `value` mediumblob,
-  `device_ID` int(10) NOT NULL
-) ;
-
--- ALTER TABLE `iot_data`
---   ADD PRIMARY KEY (`ID`, `device_ID`);
-
-ALTER TABLE `iot_data`
-  ADD CONSTRAINT `iot_data_FK` FOREIGN KEY (`device_ID`) REFERENCES `iot_device` (`ID`);
--- --------------------------------------------------------
 -- Table structure for table `OTP`
 
 CREATE TABLE `OTP` (
@@ -174,7 +159,7 @@ ALTER TABLE `working_time`
 CREATE TABLE `tracking_work_days` (
   `date` date NOT NULL,
   `total_hour` int(3) NOT NULL,
-  `status` char(10) NOT NULL,
+  `status` char(255),
   `employee_ID` int(10) NOT NULL
 ) ;
 
@@ -185,17 +170,39 @@ ALTER TABLE `tracking_work_days`
   ADD CONSTRAINT `tracking_work_days_FK` FOREIGN KEY (`employee_ID`) REFERENCES `employee` (`ID`);
 
 -- --------------------------------------------------------
--- Table structure for table `time_status`
+-- Table structure for table `iot_data`
 
-CREATE TABLE `time_status` (
-  `date` date NOT NULL PRIMARY KEY,
-  `time` time NOT NULL,
-  `status` char(10) NOT NULL,
-  `type` char(10) NOT NULL
+CREATE TABLE `iot_data` (
+  `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `date` date,
+  `time` time,
+  `value` char(255),
+  `type` char(255),
+  `device_ID` int(10) NOT NULL,
+  `employee_ID` int(10) NOT NULL
 ) ;
 
-ALTER TABLE `time_status`
-  ADD CONSTRAINT `time_status_FK` FOREIGN KEY (`date`) REFERENCES `tracking_work_days` (`date`);
+-- ALTER TABLE `iot_data`
+--   ADD PRIMARY KEY (`ID`, `device_ID`);
+
+ALTER TABLE `iot_data`
+  ADD CONSTRAINT `iot_data_FK_1` FOREIGN KEY (`device_ID`) REFERENCES `iot_device` (`ID`);
+
+ALTER TABLE `iot_data`
+  ADD CONSTRAINT `iot_data_FK_2` FOREIGN KEY (`employee_ID`) REFERENCES `tracking_work_days` (`employee_ID`);
+
+-- --------------------------------------------------------
+-- Table structure for table `time_status`
+
+-- CREATE TABLE `time_status` (
+--   `date` date NOT NULL PRIMARY KEY,
+--   `time` time NOT NULL,
+--   `status` char(255),
+--   `type` char(10) NOT NULL
+-- ) ;
+
+-- ALTER TABLE `time_status`
+--   ADD CONSTRAINT `time_status_FK` FOREIGN KEY (`date`) REFERENCES `tracking_work_days` (`date`);
 
 -- --------------------------------------------------------
 -- to be continued ?
@@ -442,19 +449,42 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `create_OTP`(
+<<<<<<< Updated upstream
     IN p_account_id INT
 ) RETURN CHAR(6)
+=======
+  IN p_account_id INT
+)
+>>>>>>> Stashed changes
 BEGIN
-    DECLARE account_exists INT;
-    DECLARE OTP_exists INT;
-    DECLARE OTP_code CHAR(6);
-    DECLARE OTP_status CHAR(10);
-    DECLARE account_has_OTP INT;
+  DECLARE account_exists INT;
+  DECLARE OTP_exists INT;
+  DECLARE OTP_code CHAR(6);
+  DECLARE OTP_status CHAR(10);
+  DECLARE account_has_OTP INT;
 
-    SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
-    IF account_exists = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+  SELECT COUNT(*) INTO account_exists FROM account WHERE ID = p_account_id;
+  IF account_exists = 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
+  ELSE
+    SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
+    IF OTP_exists = 0 THEN
+      REPEAT
+        SET OTP_code = CONCAT(
+          CHAR(FLOOR(65 + RAND() * 26)),
+          CHAR(FLOOR(65 + RAND() * 26)),
+          CHAR(FLOOR(65 + RAND() * 26)),
+          CHAR(FLOOR(48 + RAND() * 10)),
+          CHAR(FLOOR(48 + RAND() * 10)),
+          CHAR(FLOOR(48 + RAND() * 10))
+        );
+        SET account_has_OTP = (SELECT COUNT(*) FROM OTP WHERE code = OTP_code);
+      UNTIL account_has_OTP = 0 END REPEAT;
+      SET OTP_status = 'active';
+      INSERT INTO OTP (code, status, account_ID)
+      VALUES (OTP_code, OTP_status, p_account_id);
     ELSE
+<<<<<<< Updated upstream
         SELECT COUNT(*) INTO OTP_exists FROM OTP WHERE account_ID = p_account_id;
         IF OTP_exists = 0 THEN
             REPEAT
@@ -475,7 +505,11 @@ BEGIN
         ELSE
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
         END IF;
+=======
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'OTP already exists';
+>>>>>>> Stashed changes
     END IF;
+  END IF;
 END$$
 DELIMITER ;
 
@@ -502,6 +536,37 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
+
+-- --------------------------------------------------------
+-- Procedure structure for procedure `check_in`
+-- CALL check_in('employee_id', 'iot_device_id', `date`, `time`, `value`, `type`)
+
+DELIMITER $$
+CREATE PROCEDURE `check_in`(
+    IN p_employee_id INT,
+    IN p_iot_device_id INT,
+    IN p_date DATE,
+    IN p_time TIME,
+    IN p_value CHAR(255),
+    IN p_type CHAR(255)
+)
+BEGIN
+    DECLARE employee_exists INT;
+    DECLARE device_exists INT;
+
+    SELECT COUNT(*) INTO employee_exists FROM employee WHERE ID = p_employee_id;
+    SELECT COUNT(*) INTO device_exists FROM iot_device WHERE ID = p_iot_device_id;
+    IF employee_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee ID does not exist';
+    ELSEIF device_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Device ID does not exist';
+    ELSE
+        INSERT INTO tracking_work_days(date, employee_ID)
+        VALUES (p_date, p_employee_id);
+        INSERT INTO iot_data(date, time, value, type, device_ID, employee_ID)
+        VALUES (p_date, p_time, p_value, p_type, p_iot_device_id, p_employee_id);
+    END IF;
+END$$
 
 
 
