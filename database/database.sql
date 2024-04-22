@@ -402,9 +402,9 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE `update_info`(
     IN p_account_id INT,
-    IN p_password char(255),
     IN p_phone_num CHAR(15),
     IN p_address CHAR(255),
+    IN p_email char(255),
     IN p_avatar MEDIUMTEXT
 )
 BEGIN
@@ -415,7 +415,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
     ELSE
         UPDATE account
-        SET password = p_password, phone_num = p_phone_num, address = p_address, avatar = p_avatar
+        SET phone_num = p_phone_num, address = p_address, avatar = p_avatar, email = p_email
         WHERE ID = p_account_id;
     END IF;
 END$$
