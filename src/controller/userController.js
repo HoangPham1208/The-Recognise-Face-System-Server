@@ -77,7 +77,7 @@ const getAttendanceTrack = async (req, res) => {
   try {
     const attendanceTrack = await userModel.getAttendanceTrack(req.user.id);
     if (!attendanceTrack) {
-      return res.status(404).json({ status: "Not found", message: "Not tracking in this account" });
+      return res.status(404).json({ status: "Empty", message: "Not tracking in this account" });
     }
     return res.status(200).json({ status: "ok", result: attendanceTrack });
   } catch (err) {
@@ -91,7 +91,7 @@ const getEmployeeDetails = async (req, res) => {
     if (!employeeDetails) {
       return res
         .status(404)
-        .json({ status: "error", message: "Not found data" });
+        .json({ status: "Empty", message: "Not found data" });
     }
     return res.status(200).json({ status: "ok", message: employeeDetails });
   } catch (err) {
@@ -117,8 +117,8 @@ const getForm = async (req, res) => {
     const form = await userModel.getForm(req.user.id);
     if (!form) {
       return res
-        .status(403)
-        .json({ status: "error", message: "Unauthorized" });
+        .status(404)
+        .json({ status: "Empty", message: "Don't have anything" });
     }
     return res.status(200).json({ status: "ok", message: form });
   } catch (err) {
@@ -126,18 +126,6 @@ const getForm = async (req, res) => {
   }
 };
 
-const respondForm = async (req, res) => {
-  try {
-    let {description, status, form_id} = req.body
-    let date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
-    let formatted_date_time = new Date(date_time).toISOString().slice(0, 19).replace('T', ' ');
-    if (!description) description = ""
-    const form = await userModel.sendForm(req.user.id, formatted_date_time, description,status, form_id);
-    return res.status(200).json({ status: "ok", message: "Successful!" });
-  } catch (err) {
-    return res.status(500).json({ status: "error", message: err.message });
-  }
-};
 
 module.exports = {
   updateUser,
@@ -147,5 +135,4 @@ module.exports = {
   getEmployeeDetails,
   sendForm,
   getForm,
-  respondForm
 };
