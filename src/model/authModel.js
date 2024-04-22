@@ -23,12 +23,12 @@ module.exports = {
       db.query(check_manager_sql, check_params, (err, result) => {
         if (err) reject(err);
         if (result.length == 0) resolve(false);
-      });
-      let sql = "CALL add_staff(?, ?)";
-      let params = [account_name, password];
-      db.query(sql, params, (error, result) => {
-        if (error) reject(error);
-        resolve(true);
+        let sql = "CALL add_staff(?, ?)";
+        let params = [account_name, password];
+        db.query(sql, params, (error, result) => {
+          if (error) reject(error);
+          resolve(true);
+        });
       });
     });
   },
