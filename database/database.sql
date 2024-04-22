@@ -70,9 +70,10 @@ ALTER TABLE `staff`
 CREATE TABLE `form` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `Type` char(255),
-  `date_time` datetime,
+  `date_time send` datetime,
   `status` char(10),
   `note` text,
+  `date_time respond` datetime,
   `response` text
 ) ;
 
