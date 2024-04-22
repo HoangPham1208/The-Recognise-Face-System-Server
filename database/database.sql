@@ -19,6 +19,7 @@ CREATE TABLE `account` (
   `phone_num` char(15),
   `status` char(10) NOT NULL,
   `address` char(255),
+  `email` char(255),
   `face_model` mediumtext
 ) ;
 
@@ -71,7 +72,8 @@ CREATE TABLE `form` (
   `Type` char(255),
   `date_time` datetime,
   `status` char(10),
-  `note` text
+  `note` text,
+  `response` text
 ) ;
 
 -- --------------------------------------------------------
@@ -84,7 +86,7 @@ CREATE TABLE `request` (
 ) ;
 
 ALTER TABLE `request`
-  ADD PRIMARY KEY (`manager_ID`, `staff_ID`, `form_ID`);
+  ADD PRIMARY KEY (`form_ID`);
 
 ALTER TABLE `request`
   ADD CONSTRAINT `request_FK_1` FOREIGN KEY (`Manager_ID`) REFERENCES `manager` (`ID`),
@@ -423,7 +425,7 @@ DELIMITER ;
 -- The OTP code is 6-character long, randomly generated, example: A1B2C3, AA6B7C8, 98K7B6,...
 -- SELECT check_OTP('account_id')
 
--- DELIMITER $$
+DELIMITER $$
 -- CREATE FUNCTION `check_OTP`(
 --   p_account_id INT
 -- ) RETURNS INT
