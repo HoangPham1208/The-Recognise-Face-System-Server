@@ -2,35 +2,35 @@ const bcryptjs = require("bcryptjs");
 const userModel = require("../model/userModel.js");
 
 const updateUser = async (req, res) => {
-  req.params.id = parseInt(req.params.id);
-  if (req.user.id !== req.params.id) {
-    return res
-      .status(401)
-      .json({ status: "error", message: "You can only update your account!" });
-  }
   try {
-    if (req.body.password) {
-      req.body.password = bcryptjs.hashSync(req.body.password, 10);
-    }
+    const { phone_num, address, email, avatar } = req.body;
     const isUpdatedUser = await userModel.updateInfo(
       req.user.id,
-      req.body.password,
-      req.body.phone_num,
-      req.body.address,
-      req.body.avatar
+      phone_num,
+      address,
+      email,
+      avatar
     );
-    const updatedUser = await getUser(req.user.id);
-    if (!updateUser) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "Not found user!" });
-    }
-    const { password, ...rest } = updatedUser;
-    res.status(200).json({ status: "ok", message: rest });
+    res.status(200).json({ status: "ok", message: "Update Successfully" });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
   }
 };
+
+const changePassword = async (req, res) => {
+  try{
+    const { password } = req.body;
+    hash_password = bcryptjs.hashSync(password, 10);
+    const isChanged = await userModel.changePassword(
+      req.user.id,
+      hash_password
+    );
+    res.status(200).json({ status: "ok", message: "Changed Successfully" });
+  }
+  catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+}
 
 const createOtp = async (req, res) => {
   req.params.id = parseInt(req.params.id);
@@ -77,7 +77,9 @@ const getAttendanceTrack = async (req, res) => {
   try {
     const attendanceTrack = await userModel.getAttendanceTrack(req.user.id);
     if (!attendanceTrack) {
-      return res.status(404).json({ status: "Empty", message: "Not tracking in this account" });
+      return res
+        .status(404)
+        .json({ status: "Empty", message: "Not tracking in this account" });
     }
     return res.status(200).json({ status: "ok", result: attendanceTrack });
   } catch (err) {
@@ -101,11 +103,20 @@ const getEmployeeDetails = async (req, res) => {
 
 const sendForm = async (req, res) => {
   try {
-    let {description} = req.body
-    let date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
-    let formatted_date_time = new Date(date_time).toISOString().slice(0, 19).replace('T', ' ');
-    if (!description) description = ""
-    const form = await userModel.sendForm(req.user.id, formatted_date_time, description);
+    let { description } = req.body;
+    let date_time = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Ho_Chi_Minh",
+    });
+    let formatted_date_time = new Date(date_time)
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    if (!description) description = "";
+    const form = await userModel.sendForm(
+      req.user.id,
+      formatted_date_time,
+      description
+    );
     return res.status(200).json({ status: "ok", message: "Successful!" });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
@@ -126,9 +137,9 @@ const getForm = async (req, res) => {
   }
 };
 
-
 module.exports = {
   updateUser,
+  changePassword,
   createOtp,
   verifyOtp,
   getAttendanceTrack,

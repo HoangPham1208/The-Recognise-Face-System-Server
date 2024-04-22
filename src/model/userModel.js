@@ -1,15 +1,30 @@
 const db = require("../database/dbConnect");
 
-const updateInfo = async (account_ID, password, phone_num, address, avatar) => {
+const updateUser = async (account_ID, phone_num, address, email, avatar) => {
   return new Promise((resolve, reject) => {
     const sql = `CALL update_info(?,?,?,?,?)`;
-    const params = [account_ID, password, phone_num, address, avatar];
+    const params = [account_ID, phone_num, address, email, avatar];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
       resolve(true);
     });
   });
 };
+
+const changePassword = async (account_ID, hash_password) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+    UPDATE account
+    SET password = ?
+    WHERE ID = ?`;
+    const params = [account_ID, hash_password];
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err);
+      resolve(true);
+    });
+  });
+};
+
 const getUser = async (account_name) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM account WHERE account_name = ?`;
@@ -113,16 +128,16 @@ const getForm = async (account_ID) => {
     const sql = `SELECT * from form as f, request as r where f.form_ID = request.form_ID and request.staff_ID = ?`;
     const params = [account_ID];
     db.query(sql, params, (err, result) => {
-      if (err) reject(err); 
+      if (err) reject(err);
       if (result.length) resolve(true);
       else resolve(false);
     });
   });
 };
 
-
 module.exports = {
-  updateInfo,
+  updateUser,
+  changePassword,
   getUser,
   getOtp,
   deleteOtp,
