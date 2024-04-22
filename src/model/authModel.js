@@ -8,7 +8,6 @@ module.exports = {
       let params = [account_name]
       db.query(sql, params, (error, result) => {
         if (error) reject(error)
-        console.log(result)
         if (result.length) {
           resolve(result[0])
         } else {
@@ -19,8 +18,8 @@ module.exports = {
   },
   register: async (account_name, password) => {
     return new Promise((resolve, reject) => {
-      const sql = 'CALL add_staff(?, ?)'
-      const params = [account_name, password]
+      let sql = 'CALL add_staff(?, ?)'
+      let params = [account_name, password]
       db.query(sql, params, (error, result) => {
         if (error) reject(error)
         resolve(true)

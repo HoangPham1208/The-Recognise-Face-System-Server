@@ -77,9 +77,9 @@ const getAttendanceTrack = async (req, res) => {
   try {
     const attendanceTrack = await userModel.getAttendanceTrack(req.user.id);
     if (!attendanceTrack) {
-      return res.status(404).json({ status: "error", message: "" });
+      return res.status(404).json({ status: "Not found", message: "Not tracking in this account" });
     }
-    return res.status(200).json({ status: "ok", message: "Successful!" });
+    return res.status(200).json({ status: "ok", result: attendanceTrack });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
   }

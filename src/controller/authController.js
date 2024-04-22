@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 module.exports = {
   login: async (req, res) => {
-    console.log(req.user)
     const { account_name, password } = req.body
     if (!account_name || !password) {
       return res.status(400).json({
@@ -14,6 +13,9 @@ module.exports = {
     }
     try {
       const account = await authModel.getUser(account_name)
+      if (!account) {
+        return res.status(401).json({ status: 'Authentication failed' });
+      }
       // const isValidPassword = await bcryptjs.compareSync(
       //   password,
       //   account.password
@@ -22,7 +24,6 @@ module.exports = {
       //   return res.status(401).json({ status: 'Authentication failed' })
       // }
       const token = jwt.sign({ id: account.ID }, process.env.SECRET_TOKEN)
-      console.log(token)
       const { password: pass, ...tem } = account
       res
         .cookie('access_token', token, {
@@ -43,6 +44,9 @@ module.exports = {
       })
     }
     try {
+      // check account first
+      const isRegistered = await authModel.getUser(account_name)
+      if (isRegistered) return res.status(409).json({status: 'Account is already registered'})
       const hashPassword = bcryptjs.hashSync(password, 10)
       const result = await authModel.register(account_name, hashPassword)
       if (result) {

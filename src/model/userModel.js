@@ -63,12 +63,15 @@ const getOtp = async (account_ID) => {
 // PENDING model
 const getAttendanceTrack = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT code FROM OTP WHERE account_ID = ?`;
+    const sql = `
+    SELECT e.position, t.status as 'Status of Date', idata.date, idata.time, idata.value, idata.type, idev.name, idev.location, idev.role FROM employee as e, tracking_work_days as t, iot_data as idata, iot_device as idev
+    WHERE e.ID = t.employee_ID and t.employee_ID = idata.employee_ID and idata.device_ID = idev.ID and e.ID = ?
+    `;
     const params = [account_ID];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
       if (result.length) {
-        resolve(result[0]);
+        resolve(result);
       } else {
         resolve(false);
       }
