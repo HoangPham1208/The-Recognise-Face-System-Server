@@ -9,6 +9,5 @@ router.get("/attendanceTrack", verifyToken, userController.getAttendanceTrack);
 router.get("/employeeDetails", verifyToken, userController.getEmployeeDetails);
 router.post("/sendForm", verifyToken, userController.sendForm);
 router.get("/getForm",verifyToken,userController.getForm);
-router.post("/respondForm", verifyToken, userController.respondForm);
 
 module.exports = router;

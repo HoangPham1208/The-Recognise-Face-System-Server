@@ -103,39 +103,23 @@ const sendForm = async (account_ID, date_time, description) => {
     const params = [account_ID, date_time, description];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
-      else resolve(true)
+      else resolve(true);
     });
   });
 };
 
 const getForm = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`
-    const check_params = [account_ID]
-    db.query(check_manager_sql, check_params, (err,result) => {
-      if(err) reject(err)
-      if(result.length == 0)
-        resolve(false)
-    })
-    const sql = `SELECT * from form`;
-    const params = [];
+    const sql = `SELECT * from form as f, request as r where f.form_ID = request.form_ID and request.staff_ID = ?`;
+    const params = [account_ID];
     db.query(sql, params, (err, result) => {
-      if (err) reject(err);
-      else resolve(result)
+      if (err) reject(err); 
+      if (result.length) resolve(true);
+      else resolve(false);
     });
   });
 };
 
-const respondForm = async (account_ID, date_time, description, status, form_id) => {
-  return new Promise((resolve, reject) => {
-    const sql = `SELECT * from announcement`;
-    const params = [account_ID, date_time, description, status, form_id];
-    db.query(sql, params, (err, result) => {
-      if (err) reject(err);
-      else resolve(true)
-    });
-  });
-};
 
 module.exports = {
   updateInfo,
@@ -147,5 +131,4 @@ module.exports = {
   getEmployeeDetails,
   sendForm,
   getForm,
-  respondForm
 };
