@@ -91,22 +91,48 @@ const getEmployeeDetails = async (req, res) => {
     if (!employeeDetails) {
       return res
         .status(404)
-        .json({ status: "error", message: "Not found Otp!" });
+        .json({ status: "error", message: "Not found data" });
     }
+    return res.status(200).json({ status: "ok", message: employeeDetails });
+  } catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
+const sendForm = async (req, res) => {
+  try {
+    let {description} = req.body
+    let date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+    let formatted_date_time = new Date(date_time).toISOString().slice(0, 19).replace('T', ' ');
+    if (!description) description = ""
+    const form = await userModel.sendForm(req.user.id, formatted_date_time, description);
     return res.status(200).json({ status: "ok", message: "Successful!" });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
   }
 };
 
-const getAnnouncement = async (req, res) => {
+const getForm = async (req, res) => {
   try {
-    const announcements = await userModel.getAnnouncement(req.user.id);
-    if (!announcements) {
+    const form = await userModel.getForm(req.user.id);
+    if (!form) {
       return res
-        .status(404)
-        .json({ status: "error", message: "Not found Otp!" });
+        .status(403)
+        .json({ status: "error", message: "Unauthorized" });
     }
+    return res.status(200).json({ status: "ok", message: form });
+  } catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
+const respondForm = async (req, res) => {
+  try {
+    let {description, status, form_id} = req.body
+    let date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+    let formatted_date_time = new Date(date_time).toISOString().slice(0, 19).replace('T', ' ');
+    if (!description) description = ""
+    const form = await userModel.sendForm(req.user.id, formatted_date_time, description,status, form_id);
     return res.status(200).json({ status: "ok", message: "Successful!" });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
@@ -119,5 +145,7 @@ module.exports = {
   verifyOtp,
   getAttendanceTrack,
   getEmployeeDetails,
-  getAnnouncement,
+  sendForm,
+  getForm,
+  respondForm
 };
