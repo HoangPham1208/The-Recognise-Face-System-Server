@@ -81,7 +81,7 @@ async function startVideo() {
 
 var useLabels = null;
 async function loadLabeledImages() {
-  let labelsData = await fetchData("http://localhost:3002/labeled");
+  let labelsData = await fetchData("http://localhost:4002/labeled");
   useLabels == labelsData;
   const labels = labelsData.name_list;
   const labeledFaceDescriptors = await Promise.all(
