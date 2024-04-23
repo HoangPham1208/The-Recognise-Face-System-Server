@@ -20,7 +20,7 @@ CREATE TABLE `account` (
   `status` char(10) NOT NULL,
   `address` char(255),
   `email` char(255),
-  `face_model` mediumtext
+  `face_model` char(255)
 ) ;
 
 -- --------------------------------------------------------
@@ -558,15 +558,15 @@ CALL add_manager('manager1', 'password');
 CALL add_manager('manager2', 'password');
 CALL add_manager('manager3', 'password');
 
-CALL send_form(4, 1, 'send form 1');
-CALL send_form(5, 2, 'send form 2');
-CALL send_form(6, 3, 'send form 3');
+-- CALL send_form(4, 1, 'send form 1');
+-- CALL send_form(5, 2, 'send form 2');
+-- CALL send_form(6, 3, 'send form 3');
 
-CALL respond_form(4, 1, 'respond form 1');
-CALL respond_form(5, 2, 'respond form 2');
-CALL respond_form(6, 3, 'respond form 3');
+-- CALL respond_form(4, 1, 'respond form 1');
+-- CALL respond_form(5, 2, 'respond form 2');
+-- CALL respond_form(6, 3, 'respond form 3');
 
-CALL update_info(1, 'password', '0123456789', 'address 1', 'images/avatar_1.png');
+-- CALL update_info(1, 'password', '0123456789', 'address 1', 'images/avatar_1.png');
 
 
 -- --------------------------------------------------------
