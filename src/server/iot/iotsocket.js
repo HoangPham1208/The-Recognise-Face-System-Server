@@ -1,16 +1,16 @@
 const path = require('path')
 module.exports = {
-  iotSocket: (app) => {
+  iotSocket: (app, iot_port) => {
     const server = require("http").Server(app);
     const io = require("socket.io")(server, {
       cors: {
-        origin: "http://localhost:4002", // iot server
+        origin: "http://localhost:" + iot_port, // iot server
         methods: ["GET", "POST"],
       },
     });
       
-    server.listen(4003, () => {
-      console.log("Websocket server for IoT is running on port 3003");
+    server.listen(iot_port, () => {
+      console.log("Websocket server for IoT is running on port " + iot_port);
     });
 
     io.on("connection", (socket) => {

@@ -57,10 +57,11 @@ app.get("/labeled", function (req, res) {
 });
 
 const port = 4002;
+const iot_port = 4003;
 
 // web socket 
 const {iotSocket} = require('./iotsocket')
-iotSocket(app)
+iotSocket(app, iot_port)
 
 
 app.listen(port, () => {

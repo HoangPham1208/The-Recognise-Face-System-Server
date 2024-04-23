@@ -29,7 +29,7 @@ app.get("/test", verifyToken, function (req, res) {
   console.log(req.user)
   res.json({msg:"hee"})
 });
-// web socket
+// web socket 
 
 app.listen(port, () => {
   console.log(`Our server is running on port ${port}`);

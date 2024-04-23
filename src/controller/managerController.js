@@ -3,8 +3,7 @@ const managerModel = require("../model/managerModel.js");
 
 const updateFaceModel = async (req, res) => {
   try {
-    const { faceModel } = req.body;
-    const update = await managerModel.updateFaceModel(req.user.id, faceModel);
+    const update = await managerModel.updateFaceModel(req.user.id,req.params.id);
     if (!update) {
       return res.status(403).json({ status: "error", message: "Unauthorized" });
     }
