@@ -56,12 +56,15 @@ app.get("/labeled", function (req, res) {
   });
 });
 
+var Router = require("../../routes/indexiot")
+Router(app)
+
 const port = 4002;
 const iot_port = 4003;
 
 // web socket 
-const {iotSocket} = require('./iotsocket')
-iotSocket(app, iot_port)
+// const {iotSocket} = require('./iotsocket')
+// iotSocket(app, iot_port)
 
 
 app.listen(port, () => {
