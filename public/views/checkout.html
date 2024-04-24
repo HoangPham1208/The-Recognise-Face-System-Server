@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     <script defer src="../javascripts/face-api.min.js"></script>
-    <script defer src="../javascripts/script-checkout.js"></script>
+    <script type="module" defer src="../javascripts/script-checkout.js"></script>
     <style>
       body {
         margin: 0;
@@ -14,20 +14,25 @@
         width: 100vw;
         height: 100vh;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
       }
       #video {
-        background-color: azure;
+        background-color: rgb(26, 80, 80);
       }
-
       canvas {
         position: absolute;
       }
     </style>
   </head>
   <body>
+    <section>CHECK OUT</section>
     <video id="video" width="720" height="560" autoplay="true"></video>
-    
+    <section id="REC">
+      <p><span id="recognizedInfo"></span></p>
+      <button onclick="window.checkout()">YES</button>
+      <button onclick="window.reset()">NO</button>
+    </section>
   </body>
 </html>

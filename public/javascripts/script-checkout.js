@@ -1,3 +1,22 @@
+import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+const socket = io("http://localhost:4003");
+socket.on("connect", function () {
+  console.log("connected to server");
+
+  // socket.emit("subscribe", "example-channel");
+
+  //Listen for messages from the "example-channel"
+  socket.on("message", function (message) {
+    console.log("received message:", message);
+  });
+  // setInterval(() => {
+  //   socket.emit("hello", "world");
+  // }, 1000);
+});
+
+var data_user;
+var real_data;
+
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
   // faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
@@ -6,9 +25,18 @@ Promise.all([
   faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
   faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
   faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+  (data_user = await fetch("http://localhost:4002/attend/getAll")),
+  (real_data = await data_user.json()),
 ]).then(startVideo);
+let information;
 
 async function startVideo() {
+  const user = real_data.message;
+  let data_dict = {};
+  user.forEach((item) => {
+    let item_id = item.ID;
+    data_dict[item_id] = item;
+  });
   // first loading data
   const labeledFaceDescriptors = await loadLabeledImages();
   async function checkForUpdates() {
@@ -34,13 +62,15 @@ async function startVideo() {
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
       if (resizedDetections.length != 0) {
         const res = faceMatcher.findBestMatch(resizedDetections[0].descriptor);
-        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-        faceapi.draw.drawDetections(canvas, resizedDetections);
-        const box = resizedDetections[0].detection.box;
-        const drawBox = new faceapi.draw.DrawBox(box, {
-          label: res.toString(),
-        });
-        drawBox.draw(canvas);
+        information = res;
+        document.getElementById("recognizedInfo").innerText =
+          "ID staff = " +
+          information._label +
+          " - Name: " +
+          data_dict[information._label].account_name;
+      } else {
+        document.getElementById("recognizedInfo").innerText = "No one";
+        information = null;
       }
       // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
       // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
@@ -59,13 +89,13 @@ async function startVideo() {
 
 var useLabels = null;
 async function loadLabeledImages() {
-  let labelsData = await fetchData("http://localhost:3002/labeled");
+  let labelsData = await fetchData("http://localhost:4002/labeled");
   useLabels == labelsData;
   const labels = labelsData.name_list;
   const labeledFaceDescriptors = await Promise.all(
     labels.map(async (label) => {
       const descriptions = [];
-      for (let i = 1; i <= 2; i++) {
+      for (let i = 1; i <= 1; i++) {
         const img = await faceapi.fetchImage(
           `../labeled_images/${label}/${i}.jpg`
         );
@@ -94,3 +124,42 @@ async function fetchData(url) {
     throw error;
   }
 }
+function postData(url) {
+  if (!information) return "No one to check in";
+
+  const postData = {
+    account_ID: information._label,
+  };
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(postData),
+  };
+  fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json(); // Parse the JSON from the response
+    })
+    .then((data) => {
+      console.log("Data successfully posted:", data);
+    })
+    .catch((error) => {
+      console.error("There was a problem posting the data:", error);
+    });
+}
+
+function checkout() {
+  const url = "http://localhost:4002/attend/check_out";
+  console.log(postData(url));
+}
+function reset() {
+  information = "";
+  alert("Vui long roi khoi tam cua camera va quet lai!");
+}
+
+window.checkout = checkout;
+window.reset = reset;
