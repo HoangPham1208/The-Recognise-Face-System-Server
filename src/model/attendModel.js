@@ -11,19 +11,7 @@ module.exports = {
       });
     });
   },
-  check_in: async (account_ID, device_ID, date, time, value, type) => {
-    return new Promise((resolve, reject) => {
-      let sql = ` INSERT INTO account`;
-      let params = [account_ID, device_ID, date, time, value, type];
-      db.query(sql, params, (error, result) => {
-        if (error) reject(error);
-        if (result.length) {
-          resolve(true);
-        } else resolve(false);
-      });
-    });
-  },
-  check_out: async (account_ID, device_ID, date, time, value, type) => {
+  check_in_out: async (account_ID, device_ID, date, time, value, type) => {
     return new Promise((resolve, reject) => {
       let sql = ` INSERT INTO account`;
       let params = [account_ID, device_ID, date, time, value, type];
