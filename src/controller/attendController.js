@@ -35,6 +35,14 @@ module.exports = {
         type
       );
       if (result) {
+        const send_by = "System";
+        await attendModel.addNotification(
+          account_ID,
+          send_by,
+          date,
+          time,
+          value
+        );
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_in failed" });
     } catch (error) {
@@ -69,6 +77,14 @@ module.exports = {
         type
       );
       if (result) {
+        const send_by = "System";
+        await attendModel.addNotification(
+          account_ID,
+          send_by,
+          date,
+          time,
+          value
+        );
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_out failed" });
     } catch (error) {

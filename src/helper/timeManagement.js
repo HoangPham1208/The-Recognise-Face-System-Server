@@ -70,16 +70,16 @@ async function process(check_type, account_ID, check_in_func) {
   const value_shift = getShift(date);
   if (check_type == "check_in") {
     if (value_shift == "morning_before") {
-      const check = await check_in_func(formattedDate, account_ID,value_shift);
+      const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "go in";
         type = "check in";
       } else {
         value = "good";
-        type = "first check in for " + value_shift;
+        type = "first check in for morning_shift";
       }
     } else if (value_shift == "morning_shift") {
-      const check = await check_in_func(formattedDate, account_ID,value_shift);
+      const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "go in";
         type = "check in";
@@ -92,7 +92,7 @@ async function process(check_type, account_ID, check_in_func) {
       value = "go in";
       type = "check in";
     } else if (value_shift == "afternoon_shift") {
-      const check = await check_in_func(formattedDate,account_ID,value_shift);
+      const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "go in";
         type = "check in";

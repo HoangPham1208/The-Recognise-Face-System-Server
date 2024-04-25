@@ -14,7 +14,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../../../public")));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,15 +22,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Route in routes
 Router(app);
 
-const port = 4000;
-const verifyToken = require("../../middleware/authentication");
-// only for test
-app.get("/test", verifyToken, function (req, res) {
-  console.log(req.user)
-  res.json({msg:"hee"})
-});
-// web socket 
+// SSE
+const verifyToken = require('../../middleware/authentication')
+const { createSession } = require("better-sse");
+const sessions = {}
+module.exports.sessions = sessions;
 
-app.listen(port, () => {
-  console.log(`Our server is running on port ${port}`);
+app.get("/sse", verifyToken, async (req, res) => {
+  const session = await createSession(req, res);
+  const clientId = req.user.id
+  sessions[clientId] = session
+  session.push(clientId)
+});
+
+// Crontab setup
+const {runCron} = require("./cron")
+runCron()
+
+app.listen(process.env.SERVER_PORT, () => {
+  console.log(`Our server is running on port ${process.env.SERVER_PORT}`);
 });

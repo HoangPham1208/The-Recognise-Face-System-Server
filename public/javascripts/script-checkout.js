@@ -1,18 +1,18 @@
-import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-const socket = io("http://localhost:4003");
-socket.on("connect", function () {
-  console.log("connected to server");
+// import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+// const socket = io("http://localhost:4003");
+// socket.on("connect", function () {
+//   console.log("connected to server");
 
-  // socket.emit("subscribe", "example-channel");
+//   // socket.emit("subscribe", "example-channel");
 
-  //Listen for messages from the "example-channel"
-  socket.on("message", function (message) {
-    console.log("received message:", message);
-  });
-  // setInterval(() => {
-  //   socket.emit("hello", "world");
-  // }, 1000);
-});
+//   //Listen for messages from the "example-channel"
+//   socket.on("message", function (message) {
+//     console.log("received message:", message);
+//   });
+//   // setInterval(() => {
+//   //   socket.emit("hello", "world");
+//   // }, 1000);
+// });
 
 var data_user;
 var real_data;

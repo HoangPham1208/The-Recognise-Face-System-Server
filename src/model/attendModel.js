@@ -35,4 +35,10 @@ module.exports = {
       });
     });
   },
+  addNotification: async (account_ID, send_by, date, time, value) => {
+    let sql = ``;
+    const date_time = date + " " + time;
+    let params = [send_by, date_time, value, account_ID];
+    db.query(sql, params, (error, result) => {});
+  },
 };
