@@ -16,13 +16,17 @@ module.exports = {
       });
     }
     const device_ID = process.env.CAMERA_CHECK_IN;
-    const myData = await data_process("check_in", account_ID, attendModel.checkFirstCheckIn(account_ID,value_shift));
+    const myData = await data_process(
+      "check_in",
+      account_ID,
+      attendModel.checkFirstCheckIn(account_ID, value_shift)
+    );
     const date = myData.formattedDate;
     const time = myData.formattedTime;
     const value = myData.value;
     const type = myData.type;
     try {
-      const result = await attendModel.check_in(
+      const result = await attendModel.check_in_out(
         account_ID,
         device_ID,
         date,
@@ -45,14 +49,18 @@ module.exports = {
         message: "no id provided",
       });
     }
-    const device_ID = process.env.CAMERA_CHECK_OUT;
-    const myData = await data_process("check_out", account_ID, attendModel.checkFirstCheckIn);
+    const device_ID = process.env.CAMERA_CHECK_IN;
+    const myData = await data_process(
+      "check_out",
+      account_ID,
+      attendModel.checkFirstCheckIn(account_ID, value_shift)
+    );
     const date = myData.formattedDate;
     const time = myData.formattedTime;
     const value = myData.value;
     const type = myData.type;
     try {
-      const result = await attendModel.check_out(
+      const result = await attendModel.check_in_out(
         account_ID,
         device_ID,
         date,
@@ -62,7 +70,7 @@ module.exports = {
       );
       if (result) {
         return res.status(200).json({ status: "OK" });
-      } else return res.status(401).json({ status: "check_in failed" });
+      } else return res.status(401).json({ status: "check_out failed" });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
