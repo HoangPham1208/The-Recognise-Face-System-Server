@@ -1,5 +1,6 @@
 {
   "morning_shift": {
+    "valid_check_in_begin": "6:00",
     "begin_time": "7:30",
     "end_time": "12:00"
   },
@@ -10,5 +11,6 @@
   "afternoon_shift": {
     "begin_time": "13:30",
     "end_time": "17:00"
-  }
+  },
+  "penalty": 15
 }

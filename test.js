@@ -1,26 +1,13 @@
-async function firstTask() {
-  // Simulate some asynchronous operation
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log("First task completed");
-  return 1;
-}
+const date = new Date();
 
-async function secondTask() {
-  // Simulate some asynchronous operation
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log("Second task completed");
-  return 2;
-}
+// Formatting date
+const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+// Formatting time
+const formattedTime = `${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
 
-async function executeTasksSequentially() {
-  console.log("Starting tasks...");
-  const a = await firstTask();
-  var b = a
-  if (b == 1) {
-    t = await secondTask();
-    console.log(t);
-  }
-  console.log("All tasks completed");
-}
+console.log("Formatted Date:", formattedDate);
+console.log("Formatted Time:", formattedTime);
 
-executeTasksSequentially();
+function padZero(num) {
+  return num.toString().padStart(2, '0');
+}
