@@ -19,7 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // IoT Mqtt setup
 const setup = require("../../helper/iot_mqtt");
-const exp = require("constants");
 setup()
   .then(() => {
     console.log("Setup completed successfully");
@@ -47,7 +46,7 @@ app.get("/checkout", function (req, res) {
 
 const fs = require("fs");
 app.get("/labeled", function (req, res) {
-  let directoryPath = "./labeled_images/"
+  let directoryPath = "./labeled_images/";
   res.json({
     name_list: fs
       .readdirSync(directoryPath, { withFileTypes: true })
@@ -56,17 +55,9 @@ app.get("/labeled", function (req, res) {
   });
 });
 
-var Router = require("../../routes/indexiot")
-Router(app)
+var Router = require("../../routes/indexiot");
+Router(app);
 
-const port = 4002;
-const iot_port = 4003;
-
-// web socket 
-// const {iotSocket} = require('./iotsocket')
-// iotSocket(app, iot_port)
-
-
-app.listen(port, () => {
-  console.log(`Our server is running on port ${port}`);
+app.listen(process.env.IOT_PORT, () => {
+  console.log(`Our server is running on port ${process.env.IOT_PORT}`);
 });
