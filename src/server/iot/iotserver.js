@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // IoT Mqtt setup
-const setup = require("../../helper/iot_mqtt");
+const {setup, openDoor} = require("../../helper/iot_mqtt");
 setup()
   .then(() => {
     console.log("Setup completed successfully");
@@ -26,6 +26,8 @@ setup()
   .catch((error) => {
     console.error("Error running setup:", error);
   });
+// exports to use
+module.exports.openDoor = openDoor
 
 // AI setup
 app.use(express.static(path.join(__dirname, "../../../public")));
@@ -36,7 +38,6 @@ app.use(
 );
 
 // sendFile will go here
-
 app.get("/checkin", function (req, res) {
   res.sendFile(path.join(__dirname, "../../../public/views/checkin.html"));
 });
@@ -55,7 +56,7 @@ app.get("/labeled", function (req, res) {
   });
 });
 
-var Router = require("../../routes/indexiot");
+var Router = require("../../routes/index_iot");
 Router(app);
 
 app.listen(process.env.IOT_PORT, () => {

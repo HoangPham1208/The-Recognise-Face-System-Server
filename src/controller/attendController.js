@@ -1,5 +1,6 @@
 const attendModel = require("../model/attendModel");
 const data_process = require("../helper/timeManagement");
+const {openDoor} = require("../server/iot/iotserver")
 
 module.exports = {
   get_all: async (req, res) => {
@@ -43,6 +44,7 @@ module.exports = {
           time,
           value
         );
+        openDoor()
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_in failed" });
     } catch (error) {
@@ -85,6 +87,7 @@ module.exports = {
           time,
           value
         );
+        openDoor()
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_out failed" });
     } catch (error) {

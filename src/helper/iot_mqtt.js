@@ -1,6 +1,7 @@
 const mqtt = require("mqtt");
 const { SerialPort } = require("serialport");
 let receivedData = Buffer.alloc(0);
+let microPort = null;
 
 function processData() {
   if (receivedData.length > 0) {
@@ -37,7 +38,7 @@ async function getPort() {
 async function setup() {
   try {
     const portPath = await getPort();
-    const microPort = new SerialPort({ path: portPath, baudRate: 115200 });
+    microPort = new SerialPort({ path: portPath, baudRate: 115200 });
     microPort.on("open", function () {
       // open logic
       console.log("Microbit's port is connected");
@@ -75,8 +76,20 @@ async function setup() {
     setInterval(processData, 1000); // CHECK DATA Received FROM MICRO:BIT
   } catch (error) {
     console.error("Error setting up:", error);
-    console.error("No connected to IoT Device")
+    console.error("No connected to IoT Device");
   }
 }
 
-module.exports = setup ;
+function openDoor() {
+  try {
+    if (microPort) {
+      microPort.write("1");
+    } else {
+      console.error("MicroPort is not initialized. Call setup() first.");
+    }
+  } catch (error) {
+    console.error("Error writing data to micro:bit:", error);
+  }
+}
+
+module.exports = {setup, openDoor};
