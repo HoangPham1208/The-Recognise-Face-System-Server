@@ -1,5 +1,5 @@
 const attendModel = require("../model/attendModel");
-const time_config = require("../config/dbconfig.json");
+const data_process = require("../helper/timeManagement");
 
 module.exports = {
   get_all: async (req, res) => {
@@ -15,9 +15,21 @@ module.exports = {
         message: "no id provided",
       });
     }
-    var device_ID, date, time, value, type
+    const device_ID = process.env.CAMERA_CHECK_IN;
+    const myData = await data_process("check_in", account_ID, attendModel.checkFirstCheckIn(account_ID,value_shift));
+    const date = myData.formattedDate;
+    const time = myData.formattedTime;
+    const value = myData.value;
+    const type = myData.type;
     try {
-      const result = await attendModel.check_in(account_ID, device_ID, date, time, value, type);
+      const result = await attendModel.check_in(
+        account_ID,
+        device_ID,
+        date,
+        time,
+        value,
+        type
+      );
       if (result) {
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_in failed" });
@@ -33,9 +45,21 @@ module.exports = {
         message: "no id provided",
       });
     }
-    var device_ID, date, time, value, type
+    const device_ID = process.env.CAMERA_CHECK_OUT;
+    const myData = await data_process("check_out", account_ID, attendModel.checkFirstCheckIn);
+    const date = myData.formattedDate;
+    const time = myData.formattedTime;
+    const value = myData.value;
+    const type = myData.type;
     try {
-      const result = await attendModel.check_out(account_ID, device_ID, date, time, value, type);
+      const result = await attendModel.check_out(
+        account_ID,
+        device_ID,
+        date,
+        time,
+        value,
+        type
+      );
       if (result) {
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_in failed" });
