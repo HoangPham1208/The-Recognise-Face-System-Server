@@ -100,7 +100,7 @@ CREATE TABLE `announcement` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `send_by` int(10) NOT NULL,
   `date_time` datetime NOT NULL,
-  `descripttion` text
+  `description` text
 ) ;
 
 -- --------------------------------------------------------
@@ -426,7 +426,7 @@ DELIMITER ;
 -- The OTP code is 6-character long, randomly generated, example: A1B2C3, AA6B7C8, 98K7B6,...
 -- SELECT check_OTP('account_id')
 
-DELIMITER $$
+-- DELIMITER $$
 -- CREATE FUNCTION `check_OTP`(
 --   p_account_id INT
 -- ) RETURNS INT
@@ -545,6 +545,61 @@ BEGIN
     END IF;
 END$$
 
+
+-- --------------------------------------------------------
+-- Procedure structure for procedure `add_iot_data`
+-- CALL add_iot_device('employee_id', 'device_id', 'date', 'time', 'value', 'type')
+
+DELIMITER $$
+CREATE PROCEDURE `add_iot_data`(
+    IN p_employee_id INT,
+    IN p_device_id INT,
+    IN p_date DATE,
+    IN p_time TIME,
+    IN p_value CHAR(255),
+    IN p_type CHAR(255)
+)
+BEGIN
+    DECLARE employee_exists INT;
+    DECLARE device_exists INT;
+
+    SELECT COUNT(*) INTO employee_exists FROM employee WHERE ID = p_employee_id;
+    SELECT COUNT(*) INTO device_exists FROM iot_device WHERE ID = p_device_id;
+    IF employee_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee ID does not exist';
+    ELSEIF device_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Device ID does not exist';
+    ELSE
+        INSERT INTO iot_data(date, time, value, type, device_ID, employee_ID)
+        VALUES (p_date, p_time, p_value, p_type, p_device_id, p_employee_id);
+    END IF;
+END$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+-- Procedure structure for procedure `add_announcement`
+-- CALL add_announcement('send_by', 'date_time', 'description', 'employee_ID')
+
+DELIMITER $$
+CREATE PROCEDURE `add_announcement`(
+    IN p_send_by INT,
+    IN p_date_time DATETIME,
+    IN p_description TEXT,
+    IN p_employee_ID INT
+)
+BEGIN
+    DECLARE employee_exists INT;
+
+    SELECT COUNT(*) INTO employee_exists FROM employee WHERE ID = p_employee_ID;
+    IF employee_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee ID does not exist';
+    ELSE
+        INSERT INTO announcement(send_by, date_time, description)
+        VALUES (p_send_by, p_date_time, p_description);
+        INSERT INTO has_announcement(announcement_ID, employee_ID)
+        VALUES (LAST_INSERT_ID(), p_employee_ID);
+    END IF;
+END$$
 
 
 
