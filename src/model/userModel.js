@@ -134,6 +134,17 @@ const getForm = async (account_ID) => {
     });
   });
 };
+const getNotification = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * from announcement as a, has_announcment as h where a.ID = h.announcement_ID and h.employee_ID = ? `;
+    const params = [account_ID];
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err);
+      if (result.length) resolve(result);
+      else resolve(false);
+    });
+  });
+};
 
 module.exports = {
   updateUser,
@@ -146,4 +157,5 @@ module.exports = {
   getEmployeeDetails,
   sendForm,
   getForm,
+  getNotification
 };
