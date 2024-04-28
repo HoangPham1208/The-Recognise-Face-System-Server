@@ -2,6 +2,20 @@ const db = require("../database/dbConnect");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
+  isManager: async (account_ID) => {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * FROM employee as e WHERE e.ID = ?`;
+      let params = [account_ID];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        if (result.length) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  },
   getUser: async (account_name) => {
     return new Promise((resolve, reject) => {
       let sql = `SELECT * FROM account WHERE account_name = ?`;

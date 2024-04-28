@@ -23,14 +23,16 @@ module.exports = {
       // if (!isValidPassword) {
       //   return res.status(401).json({ status: 'Authentication failed' })
       // }
-      const token = jwt.sign({ id: account.ID }, process.env.SECRET_TOKEN);
-      const { password: pass, ...tem } = account;
+      const isManager = await authModel.isManager(account.ID);
+      const role = (isManager)?"manager": "staff";
+      const token = jwt.sign({ id: account.ID}, process.env.SECRET_TOKEN);
+      const { password, ID, face_model, ...tem } = account;
       res
         .cookie("access_token", token, {
           httpOnly: true,
         })
         .status(200)
-        .json({ status: "ok", message: tem });
+        .json({ status: "ok", message: tem, position: role  });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
