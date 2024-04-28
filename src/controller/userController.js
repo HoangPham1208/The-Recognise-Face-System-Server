@@ -137,6 +137,20 @@ const getForm = async (req, res) => {
   }
 };
 
+const getNotification = async (req, res) => {
+  try {
+    const noti = await userModel.getNotification(req.user.id);
+    if (!noti) {
+      return res
+        .status(404)
+        .json({ status: "Empty", message: "Don't have anything" });
+    }
+    return res.status(200).json({ status: "ok", message: noti });
+  } catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
 module.exports = {
   updateUser,
   changePassword,
@@ -146,4 +160,5 @@ module.exports = {
   getEmployeeDetails,
   sendForm,
   getForm,
+  getNotification
 };
