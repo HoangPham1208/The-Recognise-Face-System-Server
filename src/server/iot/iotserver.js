@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // IoT Mqtt setup
-const {setup, openDoor} = require("../../helper/iot_mqtt");
+const { setup } = require("../../helper/iot_mqtt");
 setup()
   .then(() => {
     console.log("Setup completed successfully");
@@ -27,7 +27,7 @@ setup()
     console.error("Error running setup:", error);
   });
 // exports to use
-module.exports.openDoor = openDoor
+module.exports.openDoor = openDoor;
 
 // AI setup
 app.use(express.static(path.join(__dirname, "../../../public")));
