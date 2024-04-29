@@ -43,7 +43,6 @@ module.exports = {
           time,
           value
         );
-        openDoor();
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_in failed" });
     } catch (error) {
@@ -86,7 +85,6 @@ module.exports = {
           time,
           value
         );
-        openDoor();
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "check_out failed" });
     } catch (error) {
