@@ -161,7 +161,7 @@ ALTER TABLE `working_time`
 
 CREATE TABLE `tracking_work_days` (
   `date` date NOT NULL,
-  `total_hour` int(3) NOT NULL,
+--  `total_hour` int(3) NOT NULL,
   `status` char(255),
   `employee_ID` int(10) NOT NULL
 ) ;

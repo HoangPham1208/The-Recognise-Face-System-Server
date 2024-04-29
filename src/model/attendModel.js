@@ -1,4 +1,5 @@
 const db = require("../database/dbConnect");
+const { changeFlag } = require("../helper/iot_mqtt");
 
 module.exports = {
   get_all: async () => {
@@ -17,9 +18,8 @@ module.exports = {
       let params = [account_ID, device_ID, date, time, value, type];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
-        if (result.length) {
-          resolve(true);
-        } else resolve(false);
+        changeFlag()
+        resolve(true);
       });
     });
   },

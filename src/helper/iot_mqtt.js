@@ -2,6 +2,7 @@ const mqtt = require("mqtt");
 const { SerialPort } = require("serialport");
 let receivedData = Buffer.alloc(0);
 let microPort = null;
+let openFlag = false;
 
 function processData() {
   if (receivedData.length > 0) {
@@ -80,10 +81,22 @@ async function setup() {
   }
 }
 
-function openDoor() {
+const pattern = /!4:IR:([0|1])#*/;
+// const match = pattern.exec("!4:IR:1#");
+// match[1] == 1
+function Door() {
   try {
     if (microPort) {
-      microPort.write("1");
+      let match = pattern.exec(receivedData.toString("utf8"));
+      if (!match) {
+        value = +match[1];
+        if (openFlag && value == 1) {
+          microPort.write("1");
+        } else {
+          microPort.write("0");
+          openFlag = false;
+        }
+      }
     } else {
       console.error("MicroPort is not initialized. Call setup() first.");
     }
@@ -92,4 +105,15 @@ function openDoor() {
   }
 }
 
-module.exports = {setup, openDoor};
+// setInterval(Door, 3000);
+
+function changeFlag() {
+  openFlag = true;
+}
+
+function checkFlag() {
+  console.log(openFlag);
+}
+setInterval(checkFlag, 1000);
+
+module.exports = { changeFlag, setup };
