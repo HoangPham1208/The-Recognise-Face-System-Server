@@ -268,7 +268,7 @@ BEGIN
         'unactive', -- status is default to 'active'
         NULL,  -- address
         NULL,  -- face_model
-        NULL,  -- position
+        'staff',  -- position
         0   -- working_days
     );
 END$$
@@ -329,7 +329,7 @@ BEGIN
         'unactive', -- status is default to 'active'
         NULL,  -- address
         NULL,  -- face_model
-        NULL,  -- position
+        'manager',  -- position
         0   -- working_days
     );
 END$$

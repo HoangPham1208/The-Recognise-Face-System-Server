@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs')
 const managerModel = require('../model/managerModel.js')
+const authModel = require('../model/authModel.js')
 
 const updateFaceModel = async (req, res) => {
   try {
@@ -94,6 +95,7 @@ const register = async (req, res) => {
       return res.status(409).json({ status: 'Account is already registered' })
 
     const hashPassword = bcryptjs.hashSync(password, 10)
+    console.log(req.user.id)
     const result = await authModel.register(
       req.user.id,
       account_name,
@@ -101,11 +103,15 @@ const register = async (req, res) => {
     )
     if (result) {
       return res.status(200).json({ status: 'Register successfully' })
-    } else return res.status(401).json({ status: 'Authentication failed' })
+    } else
+      return res
+        .status(401)
+        .json({ status: 'Authentication failed', message: result.message })
   } catch (error) {
     return res.status(500).json({ status: 'error', message: error.message })
   }
 }
+
 module.exports = {
   updateFaceModel,
   updateEmployee,

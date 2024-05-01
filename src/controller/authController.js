@@ -26,6 +26,8 @@ module.exports = {
       const isManager = await authModel.isManager(account.ID)
       const role = isManager ? 'manager' : 'staff'
       const token = jwt.sign({ id: account.ID }, process.env.SECRET_TOKEN)
+      console.log(token)
+      console.log(account.ID)
       const { password, ID, face_model, ...tem } = account
       res
         .cookie('access_token', token, {
