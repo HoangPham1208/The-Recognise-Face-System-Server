@@ -161,7 +161,6 @@ ALTER TABLE `working_time`
 
 CREATE TABLE `tracking_work_days` (
   `date` date NOT NULL,
---  `total_hour` int(3) NOT NULL,
   `status` char(255),
   `employee_ID` int(10) NOT NULL
 ) ;
@@ -530,6 +529,7 @@ CREATE PROCEDURE `check_in`(
 BEGIN
     DECLARE employee_exists INT;
     DECLARE device_exists INT;
+    DECLARE employee_exists_in_tracking INT;
 
     SELECT COUNT(*) INTO employee_exists FROM employee WHERE ID = p_employee_id;
     SELECT COUNT(*) INTO device_exists FROM iot_device WHERE ID = p_iot_device_id;
@@ -538,8 +538,11 @@ BEGIN
     ELSEIF device_exists = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Device ID does not exist';
     ELSE
-        INSERT INTO tracking_work_days(date, employee_ID)
-        VALUES (p_date, p_employee_id);
+        SELECT COUNT(*) INTO employee_exists_in_tracking FROM tracking_work_days WHERE employee_ID = p_employee_id AND date = p_date;
+        IF employee_exists_in_tracking = 0 THEN
+            INSERT INTO tracking_work_days(date, status, employee_ID)
+            VALUES (p_date, '', p_employee_id);
+        END IF;
         INSERT INTO iot_data(date, time, value, type, device_ID, employee_ID)
         VALUES (p_date, p_time, p_value, p_type, p_iot_device_id, p_employee_id);
     END IF;
