@@ -18,6 +18,7 @@ const changePassword = async (account_ID, hash_password) => {
     SET password = ?
     WHERE ID = ?`
     const params = [account_ID, hash_password]
+    console.log(account_ID)
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
       resolve(true)

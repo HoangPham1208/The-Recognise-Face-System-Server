@@ -1,17 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const verifyToken = require("../middleware/authentication");
-const updateFaceModel = require("../middleware/updateFaceModel");
-const managerController = require("../controller/managerController");
+const express = require('express')
+const router = express.Router()
+const verifyToken = require('../middleware/authentication')
+const updateFaceModel = require('../middleware/updateFaceModel')
+const managerController = require('../controller/managerController')
 
 router.patch(
-  "/updateFaceModel/:id",
+  '/updateFaceModel/:id',
   verifyToken,
-  updateFaceModel("file"),
+  updateFaceModel('file'),
   managerController.updateFaceModel
-);
-router.put("/updateEmployee", verifyToken, managerController.updateEmployee);
-router.get("/getForm", verifyToken, managerController.getForm);
-router.post("/respondForm", verifyToken, managerController.respondForm);
+)
+router.put('/updateEmployee', verifyToken, managerController.updateEmployee)
+router.get('/getForm', verifyToken, managerController.getForm)
+router.post('/respondForm', verifyToken, managerController.respondForm)
+router.post('/register', verifyToken, managerController.register)
 
-module.exports = router;
+module.exports = router
