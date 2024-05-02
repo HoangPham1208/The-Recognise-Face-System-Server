@@ -114,6 +114,6 @@ function changeFlag() {
 function checkFlag() {
   console.log(openFlag);
 }
-setInterval(checkFlag, 1000);
+// setInterval(checkFlag, 1000);
 
 module.exports = { changeFlag, setup };
