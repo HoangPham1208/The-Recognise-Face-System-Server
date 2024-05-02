@@ -28,11 +28,8 @@ module.exports = {
       const token = jwt.sign({ id: account.ID}, process.env.SECRET_TOKEN);
       const { password, ID, face_model, ...tem } = account;
       res
-        .cookie("access_token", token, {
-          httpOnly: true,
-        })
         .status(200)
-        .json({ status: "ok", message: tem, position: role  });
+        .json({ status: "ok", message: tem, position: role, access_token: token  });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
