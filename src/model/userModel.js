@@ -125,7 +125,7 @@ const sendForm = async (account_ID, date_time, description) => {
 
 const getForm = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * from form as f, request as r where f.form_ID = request.form_ID and request.staff_ID = ?`
+    const sql = `SELECT * from form as f, request as r where f.ID = r.form_ID and r.staff_ID = ?`
     const params = [account_ID]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
@@ -136,7 +136,7 @@ const getForm = async (account_ID) => {
 }
 const getNotification = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * from announcement as a, has_announcment as h where a.ID = h.announcement_ID and h.employee_ID = ? `
+    const sql = `SELECT * from announcement as a, has_announcement as h where a.ID = h.announcement_ID and h.employee_ID = 1`
     const params = [account_ID]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
