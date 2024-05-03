@@ -628,11 +628,8 @@ CALL add_manager('manager3', 'password');
 
 
 -- --------------------------------------------------------
-
-
-
-
-
+INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('1', 'Check In', 'active', 'H1', 'check in');
+INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('2', 'Check Out', 'active', 'H2', 'check out');
 
 
 

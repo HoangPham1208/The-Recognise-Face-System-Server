@@ -12,13 +12,20 @@ module.exports = {
       });
     });
   },
-  check_in_out: async (account_ID, device_ID, date, time, value, type) => {
+  check_in_out: async (
+    account_ID,
+    device_ID,
+    date,
+    time,
+    value,
+    type
+  ) => {
     return new Promise((resolve, reject) => {
-      let sql = `CALL check_in(?,?,?,?,?,?)`;
+      sql = `CALL check_in(?,?,?,?,?,?)`;
       let params = [account_ID, device_ID, date, time, value, type];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
-        changeFlag()
+        changeFlag();
         resolve(true);
       });
     });

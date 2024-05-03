@@ -56,7 +56,7 @@ function getShift(date) {
   } else return "out of time";
 }
 async function process(check_type, account_ID, check_in_func) {
-  var date = new Date("Thu Apr 25 2024 17:00:00");
+  var date = new Date();
   // Formatting date
   const formattedDate = `${date.getFullYear()}-${padZero(
     date.getMonth() + 1
