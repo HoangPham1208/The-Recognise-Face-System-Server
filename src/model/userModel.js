@@ -79,8 +79,9 @@ const getOtp = async (account_ID) => {
 const getAttendanceTrack = async (account_ID) => {
   return new Promise((resolve, reject) => {
     const sql = `
-    SELECT e.position, t.status as 'Status of Date', idata.date, idata.time, idata.value, idata.type, idev.name, idev.location, idev.role FROM employee as e, tracking_work_days as t, iot_data as idata, iot_device as idev
-    WHERE e.ID = t.employee_ID and t.employee_ID = idata.employee_ID and idata.device_ID = idev.ID and e.ID = ?
+    SELECT idata.date, idata.time, idata.type, idata.value, idev.name, idev.location FROM iot_data as idata, iot_device as idev
+    WHERE idata.device_ID = idev.ID and idata.employee_ID = ?
+    ORDER BY idata.time
     `
     const params = [account_ID]
     db.query(sql, params, (err, result) => {

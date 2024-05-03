@@ -57,7 +57,7 @@ module.exports = {
         message: "no id provided",
       });
     }
-    const device_ID = process.env.CAMERA_CHECK_IN;
+    const device_ID = process.env.CAMERA_CHECK_OUT;
     const myData = await data_process(
       "check_out",
       account_ID,

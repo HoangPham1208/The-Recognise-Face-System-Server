@@ -27,7 +27,6 @@ setup()
     console.error("Error running setup:", error);
   });
 // exports to use
-module.exports.openDoor = openDoor;
 
 // AI setup
 app.use(express.static(path.join(__dirname, "../../../public")));
