@@ -69,11 +69,11 @@ ALTER TABLE `staff`
 
 CREATE TABLE `form` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Type` char(255),
-  `date_time send` datetime,
+  `type` char(255),
+  `date_time_send` datetime,
   `status` char(10),
   `note` text,
-  `date_time respond` datetime,
+  `date_time_respond` datetime,
   `response` text
 ) ;
 
@@ -337,60 +337,61 @@ DELIMITER ;
 
 -- --------------------------------------------------------
 -- Procedure structure for procedure `send_form`
--- CALL send_form('manager_id', 'staff_id', 'send_note')
+-- CALL send_form('staff_id', 'type', 'date_time', 'note')
 
 DELIMITER $$
 CREATE PROCEDURE `send_form`(
-    IN p_manager_id INT,
     IN p_staff_id INT,
-    IN p_form_note TEXT
+    IN p_type CHAR(255),
+    IN p_date_time DATETIME,
+    IN p_note TEXT
 )
 BEGIN
-    DECLARE form_id INT;
-    DECLARE manager_exists INT;
     DECLARE staff_exists INT;
+    DECLARE first_manager_id INT;
 
-    SELECT COUNT(*) INTO manager_exists FROM manager WHERE ID = p_manager_id;
     SELECT COUNT(*) INTO staff_exists FROM staff WHERE ID = p_staff_id;
-    IF manager_exists = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager ID does not exist';
-    ELSEIF staff_exists = 0 THEN
+    IF staff_exists = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Staff ID does not exist';
     ELSE
-        INSERT INTO form (Type, date_time, status, note)
-        VALUES ('Send Form', NOW(), 'pending', p_form_note);
-        SET form_id = LAST_INSERT_ID();
+        INSERT INTO form (type, date_time_send, status, note)
+        VALUES (p_type, p_date_time, 'Đang chờ duyệt', p_note);
+        -- Get the first manager ID
+        SELECT ID INTO first_manager_id FROM manager LIMIT 1;
         INSERT INTO request (manager_ID, staff_ID, form_ID)
-        VALUES (p_manager_id, p_staff_id, form_id);
+        VALUES (first_manager_id, p_staff_id, LAST_INSERT_ID());
     END IF;
 END$$
+DELIMITER ;
 
 -- Procedure structure for procedure `respond_form`
--- CALL respond_form('manager_id', 'staff_id', 'response_note')
+-- CALL respond_form('form_id', 'manager_id', 'status', 'date_time', 'response')
 
 DELIMITER $$
 CREATE PROCEDURE `respond_form`(
+    IN p_form_id INT,
     IN p_manager_id INT,
-    IN p_staff_id INT,
-    IN p_form_note TEXT
+    IN p_status CHAR(255),
+    IN p_date_time DATETIME,
+    IN p_response TEXT
 )
 BEGIN
-    DECLARE form_id INT;
+    DECLARE form_exists INT;
     DECLARE manager_exists INT;
-    DECLARE staff_exists INT;
 
+    SELECT COUNT(*) INTO form_exists FROM form WHERE ID = p_form_id;
     SELECT COUNT(*) INTO manager_exists FROM manager WHERE ID = p_manager_id;
-    SELECT COUNT(*) INTO staff_exists FROM staff WHERE ID = p_staff_id;
-    IF manager_exists = 0 THEN
+    IF form_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Form ID does not exist';
+    ELSEIF manager_exists = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manager ID does not exist';
-    ELSEIF staff_exists = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Staff ID does not exist';
     ELSE
-        INSERT INTO form (Type, date_time, status, note)
-        VALUES ('Respond Form', NOW(), 'pending', p_form_note);
-        SET form_id = LAST_INSERT_ID();
-        INSERT INTO request (manager_ID, staff_ID, form_ID)
-        VALUES (p_manager_id, p_staff_id, form_id);
+        UPDATE request
+        SET manager_ID = p_manager_id
+        WHERE form_ID = p_form_id;
+        UPDATE form
+        SET `status` = p_status, date_time_respond = p_date_time, response = p_response
+        WHERE ID = p_form_id;
     END IF;
 END$$
 DELIMITER ;
@@ -603,6 +604,7 @@ BEGIN
         VALUES (LAST_INSERT_ID(), p_employee_ID);
     END IF;
 END$$
+DELIMITER ;
 
 
 
