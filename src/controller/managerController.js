@@ -53,7 +53,7 @@ const getForm = async (req, res) => {
 
 const respondForm = async (req, res) => {
   try {
-    let { description, status, form_id } = req.body;
+    let { description, status, form_ID } = req.body;
     let date_time = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Ho_Chi_Minh",
     });
@@ -62,12 +62,12 @@ const respondForm = async (req, res) => {
       .slice(0, 19)
       .replace("T", " ");
     if (!description) description = "";
-    const form = await managerModel.sendForm(
+    const form = await managerModel.respondForm(
+      form_ID,
       req.user.id,
-      formatted_date_time,
-      description,
       status,
-      form_id
+      formatted_date_time,
+      description
     );
     if (!form) {
       return res.status(403).json({ status: "error", message: "Unauthorized" });

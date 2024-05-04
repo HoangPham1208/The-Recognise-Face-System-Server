@@ -71,7 +71,7 @@ CREATE TABLE `form` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `type` char(255),
   `date_time_send` datetime,
-  `status` char(10),
+  `status` char(255),
   `note` text,
   `date_time_respond` datetime,
   `response` text

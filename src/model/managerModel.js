@@ -1,9 +1,30 @@
 const db = require("../database/dbConnect");
 const path = require("path");
 
+const getEmployee = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const check_manager_sql = `SELECT * from manager as m where m.ID = ?`;
+    const check_params = [account_ID];
+    db.query(check_manager_sql, check_params, (err, result) => {
+      if (err) reject(err);
+      if (result.length == 0) resolve(false);
+      db.query(check_manager_sql, check_params, (err, result) => {
+        if (err) reject(err);
+        if (result.length == 0) resolve(false);
+        const sql = `SELECT * from employee`;
+        const params = [];
+        db.query(sql, params, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+    });
+  });
+};
+
 const updateFaceModel = async (account_ID, user_id) => {
   return new Promise((resolve, reject) => {
-    const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`;
+    const check_manager_sql = `SELECT * from manager as m where m.ID = ?`;
     const check_params = [account_ID];
     db.query(check_manager_sql, check_params, (err, result) => {
       if (err) reject(err);
@@ -36,7 +57,7 @@ const updateEmployee = async (
   position
 ) => {
   return new Promise((resolve, reject) => {
-    const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`;
+    const check_manager_sql = `SELECT * from manager as m where m.ID = ?`;
     const check_params = [account_ID];
     db.query(check_manager_sql, check_params, (err, result) => {
       if (err) reject(err);
@@ -57,7 +78,15 @@ const updateEmployee = async (
         let params_2 = [name, email, phone, employee_ID];
         db.query(sql_2, params_2, (err, result) => {
           if (err) reject(err);
-          else resolve(true);
+          let sql_3;
+          if (position == "manager") sql_3 = `INSERT INTO manager VALUES (?)`;
+          else sql_3 = `DELETE FROM manager WHERE manager.ID = ?`;
+          
+          let params_3 = [employee_ID];
+          db.query(sql_3, params_3, (err, result) => {
+            if (err) reject(err);
+            else resolve(true);
+          });
         });
       });
     });
@@ -66,7 +95,7 @@ const updateEmployee = async (
 
 const getForm = async (account_ID) => {
   return new Promise((resolve, reject) => {
-    const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`;
+    const check_manager_sql = `SELECT * from manager as m where m.ID = ?`;
     const check_params = [account_ID];
     db.query(check_manager_sql, check_params, (err, result) => {
       if (err) reject(err);
@@ -82,20 +111,20 @@ const getForm = async (account_ID) => {
 };
 
 const respondForm = async (
+  form_ID,
   account_ID,
-  date_time,
-  description,
   status,
-  form_id
+  date_time,
+  description
 ) => {
   return new Promise((resolve, reject) => {
-    const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`;
+    const check_manager_sql = `SELECT * from manager as m where m.ID = ?`;
     const check_params = [account_ID];
     db.query(check_manager_sql, check_params, (err, result) => {
       if (err) reject(err);
       if (result.length == 0) resolve(false);
-      const sql = `SELECT * from announcement`;
-      const params = [account_ID, date_time, description, status, form_id];
+      const sql = `CALL respond_form(?,?,?,?,?)`;
+      const params = [form_ID, account_ID, status, date_time, description];
       db.query(sql, params, (err, result) => {
         if (err) reject(err);
         else resolve(true);
@@ -105,6 +134,7 @@ const respondForm = async (
 };
 
 module.exports = {
+  getEmployee,
   updateFaceModel,
   updateEmployee,
   getForm,

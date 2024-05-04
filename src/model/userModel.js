@@ -113,10 +113,10 @@ const getEmployeeDetails = async (account_ID) => {
   })
 }
 
-const sendForm = async (account_ID, date_time, description) => {
+const sendForm = async (account_ID, type, date_time, description) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * from announcement`
-    const params = [account_ID, date_time, description]
+    const sql = `CALL send_form(?,?,?,?)`
+    const params = [account_ID, type, date_time, description]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
       else resolve(true)
@@ -130,7 +130,7 @@ const getForm = async (account_ID) => {
     const params = [account_ID]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
-      if (result.length) resolve(true)
+      if (result.length) resolve(result)
       else resolve(false)
     })
   })

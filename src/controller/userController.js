@@ -99,7 +99,7 @@ const getEmployeeDetails = async (req, res) => {
 
 const sendForm = async (req, res) => {
   try {
-    let { description } = req.body
+    let { type, description } = req.body
     let date_time = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Ho_Chi_Minh',
     })
@@ -110,6 +110,7 @@ const sendForm = async (req, res) => {
     if (!description) description = ''
     const form = await userModel.sendForm(
       req.user.id,
+      type,
       formatted_date_time,
       description
     )
