@@ -15,11 +15,7 @@ CREATE TABLE `account` (
   `account_name` char(255) NOT NULL,
   `password` char(255) NOT NULL,
   `avatar` mediumtext,
-  `name` char(255),
-  `phone_num` char(15),
   `status` char(10) NOT NULL,
-  `address` char(255),
-  `email` char(255),
   `face_model` char(255)
 ) ;
 
@@ -29,14 +25,18 @@ CREATE TABLE `account` (
 CREATE TABLE `employee` (
   `ID` int(10) NOT NULL,
   `position` char(255),
-  `working_days` int(5) NOT NULL
+  `working_days` int(5) NOT NULL,
+  `address` char(255),
+  `email` char(255),
+  `name` char(255),
+  `phone_num` char(15)
 ) ;
 
 ALTER TABLE `employee`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`);	
 
-ALTER TABLE `employee`
-  ADD CONSTRAINT `employee_FK_1` FOREIGN KEY (`ID`) REFERENCES `account` (`ID`);
+ALTER TABLE `account`
+  ADD CONSTRAINT `account_FK_1` FOREIGN KEY (`ID`) REFERENCES `employee` (`ID`);
 
 -- --------------------------------------------------------
 -- Table structure for table `manager`
@@ -215,59 +215,54 @@ ALTER TABLE `iot_data`
 -- CALL add_staff('account_name_value', 'password_value');
 
 -- Or CALL add_staff_0(
+--     'employee_id',
 --     'account_name_value',
 --     'password_value',
 --     'avatar_value',
---     'name_value',
---     'phone_num_value',
 --     'status_value',
---     'address_value',
 --     'face_model_value',
---     'position_value',
 --     working_days_value
 -- );
 
 DELIMITER $$
 CREATE PROCEDURE `add_staff_0`(
+  IN p_employee_id INT(10),
   IN p_account_name CHAR(255),
   IN p_password CHAR(255),
   IN p_avatar MEDIUMTEXT,
-  IN p_name CHAR(255),
-  IN p_phone_num CHAR(15),
   IN p_status CHAR(10),
-  IN p_address CHAR(255),
   IN p_face_model MEDIUMTEXT,
-  IN p_position CHAR(255),
   IN p_working_days INT(5)
 )
+
 BEGIN
+  DECLARE my_position CHAR(255);
   DECLARE account_id INT;
-  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_model)
-  VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
-  SET account_id = LAST_INSERT_ID();
-  INSERT INTO employee (ID, position, working_days)
-  VALUES (account_id, p_position, p_working_days);
-  INSERT INTO staff (ID)
-  VALUES (account_id);
+  INSERT INTO account (ID, account_name, password, avatar, status, face_model)
+  VALUES (p_employee_id, p_account_name, p_password, p_avatar, p_status, p_face_model);
+  SELECT position INTO my_position FROM employee WHERE employee.ID = p_employee_id;
+  IF my_position = 'manager' THEN
+	INSERT INTO manager(ID) VALUES (p_employee_id) ;
+  ELSE
+	INSERT INTO staff(ID) VALUES (p_employee_id) ;
+  END IF;
 END$$
 DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `add_staff`(
     IN p_account_name CHAR(255),
-    IN p_password CHAR(255)
+    IN p_password CHAR(255),
+    IN p_employee_id INT(10)
 )
 BEGIN
     CALL add_staff_0(
+		p_employee_id,
         p_account_name, 
         p_password, 
         NULL,  -- avatar
-        NULL,  -- name
-        NULL,  -- phone_num
         'unactive', -- status is default to 'active'
-        NULL,  -- address
         NULL,  -- face_model
-        NULL,  -- position
         0   -- working_days
     );
 END$$
@@ -293,12 +288,8 @@ CREATE PROCEDURE `add_manager_0`(
   IN p_account_name CHAR(255),
   IN p_password CHAR(255),
   IN p_avatar MEDIUMTEXT,
-  IN p_name CHAR(255),
-  IN p_phone_num CHAR(15),
   IN p_status CHAR(10),
-  IN p_address CHAR(255),
   IN p_face_model MEDIUMTEXT,
-  IN p_position CHAR(255),
   IN p_working_days INT(5)
 )
 BEGIN
@@ -323,12 +314,8 @@ BEGIN
         p_account_name, 
         p_password, 
         NULL,  -- avatar
-        NULL,  -- name
-        NULL,  -- phone_num
         'unactive', -- status is default to 'active'
-        NULL,  -- address
         NULL,  -- face_model
-        NULL,  -- position
         0   -- working_days
     );
 END$$
@@ -336,7 +323,7 @@ DELIMITER ;
 
 
 -- --------------------------------------------------------
--- Procedure structure for procedure `send_form`
+-- Procedure structure for procedure `has_announcementsend_form`
 -- CALL send_form('staff_id', 'type', 'date_time', 'note')
 
 DELIMITER $$
@@ -610,13 +597,13 @@ DELIMITER ;
 
 -- --------------------------------------------------------
 -- Insert some data
-CALL add_staff('staff1', 'password');
-CALL add_staff('staff2', 'password');
-CALL add_staff('staff3', 'password');
+-- CALL add_staff('staff1', 'password');
+-- CALL add_staff('staff2', 'password');
+-- CALL add_staff('staff3', 'password');
 
-CALL add_manager('manager1', 'password');
-CALL add_manager('manager2', 'password');
-CALL add_manager('manager3', 'password');
+-- CALL add_manager('manager1', 'password');
+-- CALL add_manager('manager2', 'password');
+-- CALL add_manager('manager3', 'password');
 
 -- CALL send_form(4, 1, 'send form 1');
 -- CALL send_form(5, 2, 'send form 2');
@@ -633,5 +620,14 @@ CALL add_manager('manager3', 'password');
 INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('1', 'Check In', 'active', 'H1', 'check in');
 INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('2', 'Check Out', 'active', 'H2', 'check out');
 
+-- Employee Data
+INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('1', 'manager', '1000', '1 St. AAA', '1A@gmail.com', 'A.A.A', '12345678');
+INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('2', 'manager', '1000', '2 St. BBB', '2B@gmail.com', 'B.B.B', '12345678');
+INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('3', 'staff', '200', '3 St. CCC', '3C@gmail.com', 'C.C.C', '12345678');
+INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('4', 'staff', '300', '4 St. DDD', '4D@gmail.com', 'D.D.D', '12345678');
+INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('5', 'staff', '400', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678');
 
-
+-- Insert some data
+CALL add_staff('staff1', 'password','1');
+CALL add_staff('staff2', 'password','3');
+CALL add_staff('staff3', 'password','4');

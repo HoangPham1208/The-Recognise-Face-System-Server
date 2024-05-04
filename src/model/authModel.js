@@ -30,15 +30,15 @@ module.exports = {
       });
     });
   },
-  register: async (account_ID, account_name, password) => {
+  register: async (account_ID, account_name, password, employee_ID) => {
     return new Promise((resolve, reject) => {
-      const check_manager_sql = `SELECT * from employee as e where e.ID = ? and e.position = 'manager'`;
+      const check_manager_sql = `SELECT * FROM manager WHERE manager.ID = ?`;
       const check_params = [account_ID];
       db.query(check_manager_sql, check_params, (err, result) => {
         if (err) reject(err);
         if (result.length == 0) resolve(false);
-        let sql = "CALL add_staff(?, ?)";
-        let params = [account_name, password];
+        let sql = "CALL add_staff(?, ?, ?)";
+        let params = [account_name, password, employee_ID];
         db.query(sql, params, (error, result) => {
           if (error) reject(error);
           resolve(true);

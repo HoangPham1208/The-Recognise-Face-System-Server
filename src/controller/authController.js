@@ -35,11 +35,11 @@ module.exports = {
     }
   },
   register: async (req, res) => {
-    const { account_name, password } = req.body;
-    if (!account_name || !password) {
+    const { account_name, password, employee_ID } = req.body;
+    if (!account_name || !password || !employee_ID) {
       return res.status(400).json({
         status: "failed",
-        message: "account name or password is missing",
+        message: "account name or password or employee_ID is missing",
       });
     }
     try {
@@ -54,7 +54,8 @@ module.exports = {
       const result = await authModel.register(
         req.user.id,
         account_name,
-        hashPassword
+        hashPassword,
+        employee_ID
       );
       if (result) {
         return res.status(200).json({ status: "Register successfully" });
