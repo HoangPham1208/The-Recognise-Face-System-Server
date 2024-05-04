@@ -2,19 +2,17 @@ const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
 
-function updateFaceModel(file_field) {
+function updateAvatar(file_field) {
   return function (req, res, next) {
-    const { id } = req.params;
+    const id = String(req.user.id);
     if (!id)
       return res
         .status(400)
         .json({ status: "Bad request", message: "No id user provided" });
-
-    const dir = path.join(process.env.IMAGES_PATH_MODEL, id);
+    const dir = path.join(process.env.IMAGES_PATH_AVATAR);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true }); // Ensure nested directories are created if needed
     }
-
     const storage = multer.diskStorage({
       destination: dir,
       filename: (req, file, cb) => {
@@ -47,9 +45,8 @@ function updateFaceModel(file_field) {
         callback(null, true);
       },
     });
-
     upload.single(file_field)(req, res, next);
   };
 }
 
-module.exports = updateFaceModel;
+module.exports = updateAvatar;

@@ -5,6 +5,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 var bodyParser = require("body-parser");
+const formidable = require('express-formidable');
+
+
 require('dotenv').config();
 
 var Router = require("../../routes/index");
@@ -18,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../../../public")));
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Route in routes
 Router(app);

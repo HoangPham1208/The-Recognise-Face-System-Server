@@ -147,6 +147,18 @@ const getNotification = async (account_ID) => {
   })
 }
 
+const getAvatar = async (account_ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT avatar FROM account WHERE account.ID = ?`
+    const params = [account_ID]
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err)
+      if (result.length) resolve(result[0].avatar)
+      else resolve(false)
+    })
+  })
+}
+
 module.exports = {
   updateInfo,
   changePassword,
@@ -159,4 +171,5 @@ module.exports = {
   sendForm,
   getForm,
   getNotification,
+  getAvatar
 }
