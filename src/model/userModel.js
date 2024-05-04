@@ -1,9 +1,9 @@
 const db = require('../database/dbConnect')
 
-const updateInfo = async (account_ID, phone_num, address, email, avatar) => {
+const updateAvatar = async (account_ID, avatar) => {
   return new Promise((resolve, reject) => {
-    const sql = `CALL update_info(?,?,?,?,?)`
-    const params = [account_ID, phone_num, address, email, avatar]
+    const sql = `CALL update_avatar(?,?)`
+    const params = [account_ID, avatar]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
       resolve(true)
@@ -17,7 +17,7 @@ const changePassword = async (account_ID, hash_password) => {
     UPDATE account
     SET password = ?
     WHERE ID = ?`
-    const params = [account_ID, hash_password]
+    const params = [ hash_password, account_ID]
     db.query(sql, params, (err, result) => {
       if (err) reject(err)
       resolve(true)
@@ -160,7 +160,7 @@ const getAvatar = async (account_ID) => {
 }
 
 module.exports = {
-  updateInfo,
+  updateAvatar,
   changePassword,
   getUser,
   getOtp,

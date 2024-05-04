@@ -225,7 +225,7 @@ ALTER TABLE `iot_data`
 -- );
 
 DELIMITER $$
-CREATE PROCEDURE `add_staff_0`(
+CREATE PROCEDURE `add_account_0`(
   IN p_employee_id INT(10),
   IN p_account_name CHAR(255),
   IN p_password CHAR(255),
@@ -250,13 +250,13 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `add_staff`(
+CREATE PROCEDURE `add_account`(
     IN p_account_name CHAR(255),
     IN p_password CHAR(255),
     IN p_employee_id INT(10)
 )
 BEGIN
-    CALL add_staff_0(
+    CALL add_account_0(
 		p_employee_id,
         p_account_name, 
         p_password, 
@@ -267,60 +267,6 @@ BEGIN
     );
 END$$
 DELIMITER ;
-
--- --------------------------------------------------------
--- Procedure structure for procedure `add_manager`
--- CALL add_manager('account_name_value', 'password_value');
-
--- Or CALL add_manager_0(
---     'account_name_value',
---     'password_value',
---     'avatar_value',
---     'name_value',
---     'phone_num_value',
---     'status_value',
---     'address_value',
---     'face_model_value'
--- );
-
-DELIMITER $$
-CREATE PROCEDURE `add_manager_0`(
-  IN p_account_name CHAR(255),
-  IN p_password CHAR(255),
-  IN p_avatar MEDIUMTEXT,
-  IN p_status CHAR(10),
-  IN p_face_model MEDIUMTEXT,
-  IN p_working_days INT(5)
-)
-BEGIN
-  DECLARE account_id INT;
-  INSERT INTO account (account_name, password, avatar, name, phone_num, status, address, face_model)
-  VALUES (p_account_name, p_password, p_avatar, p_name, p_phone_num, p_status, p_address, p_face_model);
-  SET account_id = LAST_INSERT_ID();
-  INSERT INTO employee (ID, position, working_days)
-  VALUES (account_id, p_position, p_working_days);
-  INSERT INTO manager (ID)
-  VALUES (account_id);
-END$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `add_manager`(
-    IN p_account_name CHAR(255),
-    IN p_password CHAR(255)
-)
-BEGIN
-    CALL add_manager_0(
-        p_account_name, 
-        p_password, 
-        NULL,  -- avatar
-        'unactive', -- status is default to 'active'
-        NULL,  -- face_model
-        0   -- working_days
-    );
-END$$
-DELIMITER ;
-
 
 -- --------------------------------------------------------
 -- Procedure structure for procedure `has_announcementsend_form`
@@ -334,9 +280,14 @@ CREATE PROCEDURE `send_form`(
     IN p_note TEXT
 )
 BEGIN
+	DECLARE is_manager INT;
     DECLARE staff_exists INT;
     DECLARE first_manager_id INT;
-
+	SELECT COUNT(*) INTO is_manager FROM manager WHERE ID = p_staff_id;
+    IF is_manager != 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only Staff can send form - you are manager';
+	END IF;
+    
     SELECT COUNT(*) INTO staff_exists FROM staff WHERE ID = p_staff_id;
     IF staff_exists = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Staff ID does not exist';
@@ -383,15 +334,12 @@ BEGIN
 END$$
 DELIMITER ;
 -- --------------------------------------------------------
--- Procedure structure for procedure `update_info` for a staff: update phone_num, address and avatar
--- CALL update_info('staff_id', 'phone_num', 'address', 'avatar')
+-- Procedure structure for procedure `update_avatar` for a staff: avatar
+-- CALL update_avatar('staff_id', 'avatar')
 
 DELIMITER $$
-CREATE PROCEDURE `update_info`(
+CREATE PROCEDURE `update_avatar`(
     IN p_account_id INT,
-    IN p_phone_num CHAR(15),
-    IN p_address CHAR(255),
-    IN p_email char(255),
     IN p_avatar MEDIUMTEXT
 )
 BEGIN
@@ -402,7 +350,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account ID does not exist';
     ELSE
         UPDATE account
-        SET phone_num = p_phone_num, address = p_address, avatar = p_avatar, email = p_email
+        SET avatar = p_avatar
         WHERE ID = p_account_id;
     END IF;
 END$$
@@ -597,14 +545,6 @@ DELIMITER ;
 
 -- --------------------------------------------------------
 -- Insert some data
--- CALL add_staff('staff1', 'password');
--- CALL add_staff('staff2', 'password');
--- CALL add_staff('staff3', 'password');
-
--- CALL add_manager('manager1', 'password');
--- CALL add_manager('manager2', 'password');
--- CALL add_manager('manager3', 'password');
-
 -- CALL send_form(4, 1, 'send form 1');
 -- CALL send_form(5, 2, 'send form 2');
 -- CALL send_form(6, 3, 'send form 3');
@@ -613,7 +553,7 @@ DELIMITER ;
 -- CALL respond_form(5, 2, 'respond form 2');
 -- CALL respond_form(6, 3, 'respond form 3');
 
--- CALL update_info(1, 'password', '0123456789', 'address 1', 'images/avatar_1.png');
+-- CALL update_avatar(1,'images/avatar_1.png');
 
 
 -- --------------------------------------------------------
@@ -628,6 +568,7 @@ INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `
 INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('5', 'staff', '400', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678');
 
 -- Insert some data
-CALL add_staff('staff1', 'password','1');
-CALL add_staff('staff2', 'password','3');
-CALL add_staff('staff3', 'password','4');
+-- That hash mean "password"
+CALL add_account('staff1', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','1');
+CALL add_account('staff3', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','3');
+CALL add_account('staff4', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','4');
