@@ -156,8 +156,7 @@ const getNotification = async (req, res) => {
 const path = require("path");
 const getAvatar = async (req, res) => {
   try {
-    // const id = req.user.id
-    let id = 1;
+    const id = req.user.id
     const avatar = await userModel.getAvatar(id);
     if (!avatar) {
       return res

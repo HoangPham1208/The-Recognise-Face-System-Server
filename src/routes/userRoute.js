@@ -12,6 +12,6 @@ router.get('/employeeDetails', verifyToken, userController.getEmployeeDetails)
 router.post('/sendForm', verifyToken, userController.sendForm)
 router.get('/getForm', verifyToken, userController.getForm)
 router.get('/getNotification', verifyToken, userController.getNotification)
-router.get('/getAvatar', userController.getAvatar)
+router.get('/getAvatar',verifyToken, userController.getAvatar)
 
 module.exports = router
