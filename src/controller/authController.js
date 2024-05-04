@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 module.exports = {
   login: async (req, res) => {
-    const { account_name, password } = req.body;
-    if (!account_name || !password) {
+    const { account_name, password: password_user } = req.body;
+    if (!account_name || !password_user) {
       return res.status(400).json({
         status: "failed",
         message: "account name or password is missing",
@@ -16,13 +16,13 @@ module.exports = {
       if (!account) {
         return res.status(401).json({ status: "Authentication failed" });
       }
-      // const isValidPassword = await bcryptjs.compareSync(
-      //   password,
-      //   account.password
-      // )
-      // if (!isValidPassword) {
-      //   return res.status(401).json({ status: 'Authentication failed' })
-      // }
+      const isValidPassword = await bcryptjs.compareSync(
+        password_user,
+        account.password
+      )
+      if (!isValidPassword) {
+        return res.status(401).json({ status: 'Authentication failed' })
+      }
       const isManager = await authModel.isManager(account.ID);
       const role = (isManager)?"manager": "staff";
       const token = jwt.sign({ id: account.ID}, process.env.SECRET_TOKEN);

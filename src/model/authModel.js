@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   isManager: async (account_ID) => {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT * FROM employee as e WHERE e.ID = ?`;
+      let sql = `SELECT * FROM manager WHERE manager.ID = ?`;
       let params = [account_ID];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
@@ -37,7 +37,7 @@ module.exports = {
       db.query(check_manager_sql, check_params, (err, result) => {
         if (err) reject(err);
         if (result.length == 0) resolve(false);
-        let sql = "CALL add_staff(?, ?, ?)";
+        let sql = "CALL add_account(?, ?, ?)";
         let params = [account_name, password, employee_ID];
         db.query(sql, params, (error, result) => {
           if (error) reject(error);

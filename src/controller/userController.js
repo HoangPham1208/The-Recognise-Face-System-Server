@@ -1,16 +1,12 @@
 const bcryptjs = require("bcryptjs");
 const userModel = require("../model/userModel.js");
 
-const updateInfo = async (req, res) => {
+const updateAvatar = async (req, res) => {
   try {
     const id = req.user.id;
-    const { phone_num, address, email } = req.body;
     const avatar_path = process.env.IMAGES_PATH_AVATAR + id + '.jpg';
-    const isUpdatedUser = await userModel.updateInfo(
+    const isUpdatedUser = await userModel.updateAvatar(
       id,
-      phone_num,
-      address,
-      email,
       avatar_path
     );
     res.status(200).json({ status: "ok", message: "Update Successfully" });
@@ -164,7 +160,6 @@ const getAvatar = async (req, res) => {
         .json({ status: "Empty", message: "Don't have anything" });
     }
     const avatar_path = path.join(__dirname, "../../", avatar);
-    console.log(avatar_path);
     return res.status(200).sendFile(avatar_path);
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
@@ -172,7 +167,7 @@ const getAvatar = async (req, res) => {
 };
 
 module.exports = {
-  updateInfo,
+  updateAvatar,
   changePassword,
   createOtp,
   verifyOtp,
