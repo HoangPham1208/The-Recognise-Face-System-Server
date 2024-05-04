@@ -238,6 +238,11 @@ CREATE PROCEDURE `add_account_0`(
 BEGIN
   DECLARE my_position CHAR(255);
   DECLARE account_id INT;
+  DECLARE check_account INT;
+  SELECT count(*) INTO check_account FROM account where account.ID = p_employee_id;
+  IF check_account = 1 THEN
+	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account employee was registered';
+  END IF;
   INSERT INTO account (ID, account_name, password, avatar, status, face_model)
   VALUES (p_employee_id, p_account_name, p_password, p_avatar, p_status, p_face_model);
   SELECT position INTO my_position FROM employee WHERE employee.ID = p_employee_id;
@@ -316,7 +321,7 @@ CREATE PROCEDURE `respond_form`(
 BEGIN
     DECLARE form_exists INT;
     DECLARE manager_exists INT;
-
+    
     SELECT COUNT(*) INTO form_exists FROM form WHERE ID = p_form_id;
     SELECT COUNT(*) INTO manager_exists FROM manager WHERE ID = p_manager_id;
     IF form_exists = 0 THEN
