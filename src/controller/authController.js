@@ -49,7 +49,7 @@ module.exports = {
         return res
           .status(409)
           .json({ status: "Account is already registered" });
-
+          
       const hashPassword = bcryptjs.hashSync(password, 10);
       const result = await authModel.register(
         req.user.id,

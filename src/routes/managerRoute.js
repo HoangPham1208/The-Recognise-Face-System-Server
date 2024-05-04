@@ -4,6 +4,7 @@ const verifyToken = require("../middleware/authentication");
 const updateFaceModel = require("../middleware/updateFaceModel");
 const managerController = require("../controller/managerController");
 
+
 router.patch(
   "/updateFaceModel/:id",
   verifyToken,
@@ -13,5 +14,6 @@ router.patch(
 router.put("/updateEmployee", verifyToken, managerController.updateEmployee);
 router.get("/getForm", verifyToken, managerController.getForm);
 router.post("/respondForm", verifyToken, managerController.respondForm);
+router.get("/getEmployee", verifyToken, managerController.getEmployeeData);
 
 module.exports = router;
