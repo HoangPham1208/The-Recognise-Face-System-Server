@@ -86,11 +86,15 @@ const respondForm = async (
 
 const getEmployeeData = async (employee_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT e.ID, e.position, e.working_days, e.address, e.email, e.name, e.phone_num, a.status from employee as e left outer join account as a on e.ID = a.ID and e.ID = ?`;
+    let sql = `
+    SELECT e.ID, e.position, e.working_days, e.address, e.email, e.name, e.phone_num, a.status 
+    FROM employee as e LEFT OUTER join account as a 
+    ON e.ID = a.ID`
+    if (employee_ID) sql += ` WHERE e.ID = ?`;
     const params = [employee_ID];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
-      else resolve(result[0]);
+      else resolve(result);
     });
   });
 };
