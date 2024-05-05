@@ -14,22 +14,29 @@ module.exports = {
     try {
       const account = await authModel.getUser(account_name);
       if (!account) {
-        return res.status(401).json({ status: "Authentication failed" });
+        return res
+          .status(401)
+          .json({ status: "error", message: "Authentication failed" });
       }
       const isValidPassword = await bcryptjs.compareSync(
         password_user,
         account.password
-      )
+      );
       if (!isValidPassword) {
-        return res.status(401).json({ status: 'Authentication failed' })
+        return res
+          .status(401)
+          .json({ status: "error", message: "Authentication failed" });
       }
       const isManager = await authModel.isManager(account.ID);
-      const role = (isManager)?"manager": "staff";
-      const token = jwt.sign({ id: account.ID}, process.env.SECRET_TOKEN);
+      const role = isManager ? "manager" : "staff";
+      const token = jwt.sign({ id: account.ID }, process.env.SECRET_TOKEN);
       const { password, ID, face_model, ...tem } = account;
-      res
-        .status(200)
-        .json({ status: "ok", message: tem, position: role, access_token: token  });
+      res.status(200).json({
+        status: "ok",
+        message: tem,
+        position: role,
+        access_token: token,
+      });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
@@ -48,7 +55,7 @@ module.exports = {
       if (isRegistered)
         return res
           .status(409)
-          .json({ status: "Account is already registered" });
+          .json({ status: "error", message: "Account is already registered" });
 
       const hashPassword = bcryptjs.hashSync(password, 10);
       const result = await authModel.register(
@@ -58,8 +65,13 @@ module.exports = {
         employee_ID
       );
       if (result) {
-        return res.status(200).json({ status: "Register successfully" });
-      } else return res.status(401).json({ status: "Authentication failed" });
+        return res
+          .status(200)
+          .json({ status: "successfully", message: "Register successfully" });
+      } else
+        return res
+          .status(401)
+          .json({ status: "error", message: "Authentication failed" });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
