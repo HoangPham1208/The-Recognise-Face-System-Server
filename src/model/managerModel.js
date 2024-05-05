@@ -7,7 +7,7 @@ const updateFaceModel = async (account_ID, user_id) => {
         UPDATE account
         SET face_model = ?
         WHERE ID = ?`;
-    const dir = path.join(process.env.IMAGES_PATH, user_id);
+    const dir = process.env.IMAGES_PATH_MODEL + user_id;
     const params = [dir, user_id];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
