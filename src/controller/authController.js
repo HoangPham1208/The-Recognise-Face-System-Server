@@ -42,6 +42,10 @@ module.exports = {
     }
   },
   register: async (req, res) => {
+    console.log(123)
+    const check = await authModel.isManager(req.user.id);
+    if (!check)
+      return res.status(403).json({ status: "error", message: "Unauthorized" });
     const { account_name, password, employee_ID } = req.body;
     if (!account_name || !password || !employee_ID) {
       return res.status(400).json({
