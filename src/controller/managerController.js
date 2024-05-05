@@ -100,11 +100,11 @@ const respondForm = async (req, res) => {
 
 const getEmployeeData = async (req, res) => {
   try {
+    const employee_ID = req.query.id
     const check = await isManager(req.user.id);
     if (!check)
       return res.status(403).json({ status: "error", message: "Unauthorized" });
-    const account_ID = req.user.id;
-    const employees = await managerModel.getEmployeeData(account_ID);
+    const employees = await managerModel.getEmployeeData(employee_ID);
     if (!employees) {
       return res
         .status(404)
