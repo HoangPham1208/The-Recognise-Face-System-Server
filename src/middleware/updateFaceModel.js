@@ -11,6 +11,7 @@ function updateFaceModel(file_field) {
         .json({ status: "Bad request", message: "No id user provided" });
 
     const dir = path.join(process.env.IMAGES_PATH_MODEL, id);
+    console.log(dir)
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true }); // Ensure nested directories are created if needed
     }
