@@ -84,13 +84,13 @@ const respondForm = async (
   });
 };
 
-const getEmployeeData = async (account_ID) => {
+const getEmployeeData = async (employee_ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT e.ID, e.position, e.working_days, e.address, e.email, e.name, e.phone_num, a.status from employee as e left outer join account as a on e.ID = a.ID`;
-    const params = [];
+    const sql = `SELECT e.ID, e.position, e.working_days, e.address, e.email, e.name, e.phone_num, a.status from employee as e left outer join account as a on e.ID = a.ID and e.ID = ?`;
+    const params = [employee_ID];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
-      else resolve(result);
+      else resolve(result[0]);
     });
   });
 };
