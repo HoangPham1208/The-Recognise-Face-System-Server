@@ -239,10 +239,16 @@ BEGIN
   DECLARE my_position CHAR(255);
   DECLARE account_id INT;
   DECLARE check_account INT;
+  DECLARE check_employee INT;
   SELECT count(*) INTO check_account FROM account where account.ID = p_employee_id;
   IF check_account = 1 THEN
 	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account employee was registered';
   END IF;
+  SELECT count(*) INTO check_employee FROM employee where employee.ID = p_employee_id;
+  IF check_employee = 0 THEN
+	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Not exists employee ID';
+  END IF;
+  
   INSERT INTO account (ID, account_name, password, avatar, status, face_model)
   VALUES (p_employee_id, p_account_name, p_password, p_avatar, p_status, p_face_model);
   SELECT position INTO my_position FROM employee WHERE employee.ID = p_employee_id;
