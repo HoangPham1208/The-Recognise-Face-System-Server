@@ -1,7 +1,7 @@
 const db = require("../database/dbConnect");
 const path = require("path");
 
-const updateFaceModel = async (account_ID, user_id) => {
+const updateFaceModel = async (user_id) => {
   return new Promise((resolve, reject) => {
     const sql = `
         UPDATE account
@@ -15,6 +15,21 @@ const updateFaceModel = async (account_ID, user_id) => {
     });
   });
 };
+
+const getFaceModelList = async (user_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+        SELECT face_model FROM account
+        WHERE ID = ?`;
+    const params = [user_id];
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err);
+      if (result.length) resolve(result[0])
+      else resolve(false)
+    });
+  });
+};
+
 
 const updateEmployee = async (
   account_ID,
@@ -101,6 +116,7 @@ const getEmployeeData = async (employee_ID) => {
 
 module.exports = {
   updateFaceModel,
+  getFaceModelList,
   updateEmployee,
   getForm,
   respondForm,

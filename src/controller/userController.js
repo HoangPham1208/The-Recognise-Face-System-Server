@@ -1,5 +1,6 @@
 const bcryptjs = require("bcryptjs");
 const userModel = require("../model/userModel.js");
+const path = require("path");
 
 const updateAvatar = async (req, res) => {
   try {
@@ -15,6 +16,21 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+const getAvatar = async (req, res) => {
+  try {
+    const id = req.user.id
+    const avatar = await userModel.getAvatar(id);
+    if (!avatar) {
+      return res
+        .status(404)
+        .json({ status: "Empty", message: "Don't have anything" });
+    }
+    const avatar_path = path.join(__dirname, "../../", avatar);
+    return res.status(200).sendFile(avatar_path);
+  } catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+};
 const changePassword = async (req, res) => {
   try {
     const { password } = req.body;
@@ -149,22 +165,7 @@ const getNotification = async (req, res) => {
   }
 };
 
-const path = require("path");
-const getAvatar = async (req, res) => {
-  try {
-    const id = req.user.id
-    const avatar = await userModel.getAvatar(id);
-    if (!avatar) {
-      return res
-        .status(404)
-        .json({ status: "Empty", message: "Don't have anything" });
-    }
-    const avatar_path = path.join(__dirname, "../../", avatar);
-    return res.status(200).sendFile(avatar_path);
-  } catch (err) {
-    return res.status(500).json({ status: "error", message: err.message });
-  }
-};
+
 
 module.exports = {
   updateAvatar,

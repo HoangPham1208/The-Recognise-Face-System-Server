@@ -4,6 +4,7 @@ const fs = require("fs");
 
 function updateFaceModel(file_field) {
   return function (req, res, next) {
+    let count = 0;
     const { id } = req.params;
     if (!id)
       return res
@@ -11,7 +12,6 @@ function updateFaceModel(file_field) {
         .json({ status: "Bad request", message: "No id user provided" });
 
     const dir = path.join(process.env.IMAGES_PATH_MODEL, id);
-    console.log(dir)
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true }); // Ensure nested directories are created if needed
     }
@@ -20,7 +20,7 @@ function updateFaceModel(file_field) {
       destination: dir,
       filename: (req, file, cb) => {
         // convert all image to jpg
-        cb(null, 1 + ".jpg"); // Use timestamp to generate a unique filename
+        cb(null, count + ".jpg"); // Use timestamp to generate a unique filename
       },
     });
 
@@ -45,11 +45,30 @@ function updateFaceModel(file_field) {
             message: "File size exceeds the limit (1MB)",
           });
         }
+        count++;
         callback(null, true);
       },
     });
 
-    upload.single(file_field)(req, res, next);
+    FILE_COUNT = 5;
+    upload.array(file_field, FILE_COUNT)(req, res, function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading
+        return res.status(400).json({
+          status: "Bad request",
+          message:
+            err.message + ", number of files can be larger than " + FILE_COUNT,
+        });
+      } else if (err) {
+        // An unknown error occurred
+        return res.status(500).json({
+          status: "Internal server error",
+          message: "Something went wrong",
+        });
+      }
+      // No error occurred, continue with the next middleware
+      next();
+    });
   };
 }
 
