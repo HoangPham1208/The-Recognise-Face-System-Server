@@ -79,7 +79,6 @@ const updateEmployee = async (req, res) => {
     const { employee_ID, name, email, phone, working_days, position } =
       req.body;
     const update = await managerModel.updateEmployee(
-      req.user.id,
       employee_ID,
       name,
       email,
