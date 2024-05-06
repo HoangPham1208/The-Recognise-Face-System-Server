@@ -32,7 +32,6 @@ const getFaceModelList = async (user_id) => {
 
 
 const updateEmployee = async (
-  account_ID,
   employee_ID,
   name,
   email,

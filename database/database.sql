@@ -98,7 +98,7 @@ ALTER TABLE `request`
 
 CREATE TABLE `announcement` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `send_by` int(10) NOT NULL,
+  `send_by` CHAR(255) NOT NULL,
   `date_time` datetime NOT NULL,
   `description` text
 ) ;
@@ -178,6 +178,7 @@ CREATE TABLE `iot_data` (
   `ID` int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `date` date,
   `time` time,
+  `status` char(255),
   `value` char(255),
   `type` char(255),
   `device_ID` int(10) NOT NULL,
@@ -470,6 +471,7 @@ CREATE PROCEDURE `check_in`(
     IN p_iot_device_id INT,
     IN p_date DATE,
     IN p_time TIME,
+    IN p_status CHAR(255),
     IN p_value CHAR(255),
     IN p_type CHAR(255)
 )
@@ -490,8 +492,8 @@ BEGIN
             INSERT INTO tracking_work_days(date, status, employee_ID)
             VALUES (p_date, '', p_employee_id);
         END IF;
-        INSERT INTO iot_data(date, time, value, type, device_ID, employee_ID)
-        VALUES (p_date, p_time, p_value, p_type, p_iot_device_id, p_employee_id);
+        INSERT INTO iot_data(date, time, status, value, type, device_ID, employee_ID)
+        VALUES (p_date, p_time, p_status, p_value, p_type, p_iot_device_id, p_employee_id);
     END IF;
 END$$
 
@@ -506,6 +508,7 @@ CREATE PROCEDURE `add_iot_data`(
     IN p_device_id INT,
     IN p_date DATE,
     IN p_time TIME,
+    IN p_status CHAR(255),
     IN p_value CHAR(255),
     IN p_type CHAR(255)
 )
@@ -520,8 +523,8 @@ BEGIN
     ELSEIF device_exists = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Device ID does not exist';
     ELSE
-        INSERT INTO iot_data(date, time, value, type, device_ID, employee_ID)
-        VALUES (p_date, p_time, p_value, p_type, p_device_id, p_employee_id);
+        INSERT INTO iot_data(date, time, status, value, type, device_ID, employee_ID)
+        VALUES (p_date, p_time, p_status, p_value, p_type, p_device_id, p_employee_id);
     END IF;
 END$$
 DELIMITER ;
@@ -532,7 +535,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `add_announcement`(
-    IN p_send_by INT,
+    IN p_send_by CHAR(255),
     IN p_date_time DATETIME,
     IN p_description TEXT,
     IN p_employee_ID INT
@@ -583,3 +586,16 @@ INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `
 CALL add_account('staff1', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','1');
 CALL add_account('staff3', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','3');
 CALL add_account('staff4', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','4');
+
+-- Tracking work day
+insert into tracking_work_days values("2024-05-07","",1);
+-- 1,1 mean check in
+-- 1,2 mean check out
+CALL check_in(1, 1, "2024-05-07", "7:15:00", "On time", "good", "first check in for morning_shift");
+CALL check_in(1, 2, "2024-05-07", "7:20:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-07", "7:32:00","Normal","go in", "check in");
+CALL check_in(1, 2, "2024-05-07", "12:00:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-07", "13:30:00","Late", "late for 30 minutes", "first check in for afternoon_shift");
+CALL check_in(1, 2, "2024-05-07", "15:20:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-07", "15:30:00","Normal", "go in", "check in");
+CALL check_in(1, 2, "2024-05-07", "17:20:00","Normal","go out", "check out");

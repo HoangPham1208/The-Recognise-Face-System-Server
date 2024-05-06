@@ -1,5 +1,6 @@
 const attendModel = require("../model/attendModel");
 const data_process = require("../helper/timeManagement");
+const { stat } = require("fs");
 
 module.exports = {
   get_all: async (req, res) => {
@@ -23,6 +24,7 @@ module.exports = {
     );
     const date = myData.formattedDate;
     const time = myData.formattedTime;
+    const status_ = myData.status_;
     const value = myData.value;
     const type = myData.type;
     try {
@@ -31,6 +33,7 @@ module.exports = {
         device_ID,
         date,
         time,
+        status_,
         value,
         type
       );
@@ -65,6 +68,7 @@ module.exports = {
     );
     const date = myData.formattedDate;
     const time = myData.formattedTime;
+    const status_ = myData.status_;
     const value = myData.value;
     const type = myData.type;
     try {
@@ -73,6 +77,7 @@ module.exports = {
         device_ID,
         date,
         time,
+        status_,
         value,
         type
       );

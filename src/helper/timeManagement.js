@@ -1,3 +1,4 @@
+const { stat } = require("fs");
 const shifts = require("../config/dbconfig.json");
 const penalty = shifts["penalty"];
 
@@ -68,6 +69,7 @@ async function process(check_type, account_ID, check_in_func) {
   var value;
   var type = "";
   const value_shift = getShift(date);
+  let status_ = "Normal"
   if (check_type == "check_in") {
     if (value_shift == "morning_before") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
@@ -77,6 +79,7 @@ async function process(check_type, account_ID, check_in_func) {
       } else {
         value = "good";
         type = "first check in for morning_shift";
+        status_ = "On time"
       }
     } else if (value_shift == "morning_shift") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
@@ -87,6 +90,7 @@ async function process(check_type, account_ID, check_in_func) {
         const check = checkFirstCheckIn(date, value_shift);
         value = check.value;
         type = check.type;
+        status_ = check.status_
       }
     } else if (value_shift == "lunch_time") {
       value = "go in";
@@ -100,6 +104,7 @@ async function process(check_type, account_ID, check_in_func) {
         const check = checkFirstCheckIn(date, value_shift);
         value = check.value;
         type = check.type;
+        status_ = check.status_
       }
     } else {
       value = "go in";
@@ -111,7 +116,7 @@ async function process(check_type, account_ID, check_in_func) {
     value = "go out";
     type = "check out";
   }
-  return { formattedDate, formattedTime, value, type };
+  return { formattedDate, formattedTime, status_, value, type };
 }
 
 function padZero(num) {
@@ -123,17 +128,23 @@ function checkFirstCheckIn(date, value_shift) {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
     const begin_in_minutes = begin_morning_hours * 60 + begin_morning_minutes;
     value = "late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
+    status_ = "Late";
   } else if (value_shift == "afternoon_shift") {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
     const begin_in_minutes =
       begin_afternoon_hours * 60 + begin_afternoon_minutes;
-    if (arrival_in_minutes - begin_in_minutes > penalty)
+    if (arrival_in_minutes - begin_in_minutes > penalty) {
       value =
         "late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
-    else value = "good";
+      status_ = "Late";
+    } else {
+      value = "good";
+      status_ = "Normal";
+    }
   }
   type = "first check in for " + value_shift;
-  return { value, type };
+
+  return { status_, value, type };
 }
 
 module.exports = process;

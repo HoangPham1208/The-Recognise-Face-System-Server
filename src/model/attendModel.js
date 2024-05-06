@@ -17,12 +17,13 @@ module.exports = {
     device_ID,
     date,
     time,
+    status,
     value,
     type
   ) => {
     return new Promise((resolve, reject) => {
-      sql = `CALL check_in(?,?,?,?,?,?)`;
-      let params = [account_ID, device_ID, date, time, value, type];
+      sql = `CALL check_in(?,?,?,?,?,?,?)`;
+      let params = [account_ID, device_ID, date, time, status, value, type];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
         changeFlag();
@@ -43,9 +44,14 @@ module.exports = {
     });
   },
   addNotification: async (account_ID, send_by, date, time, value) => {
-    let sql = `CALL add_announcement(?,?,?,?)`;
-    const date_time = date + " " + time;
-    let params = [send_by, date_time, value, account_ID];
-    db.query(sql, params, (error, result) => {});
+    return new Promise((resolve, reject) => {
+      let sql = `CALL add_announcement(?,?,?,?)`;
+      const date_time = date + " " + time;
+      let params = [send_by, date_time, value, account_ID];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        resolve(false);
+      });
+    });
   },
 };
