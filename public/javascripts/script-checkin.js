@@ -155,8 +155,8 @@ function postData(url) {
 }
 
 function checkin() {
-  const url = "http://localhost:4002/attend/checkin";
-  console.log(postData(url));
+  const url = "http://localhost:4002/attend/check-in";
+  postData(url);
 }
 function reset() {
   information = "";

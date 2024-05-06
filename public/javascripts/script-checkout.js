@@ -127,7 +127,7 @@ async function fetchData(url) {
   }
 }
 function postData(url) {
-  if (!information) return "No one to check in";
+  if (!information) return "No one to check out";
 
   const postData = {
     account_ID: information._label,
@@ -155,13 +155,13 @@ function postData(url) {
 }
 
 function checkout() {
-  const url = "http://localhost:4002/attend/checkout";
-  console.log(postData(url));
+  const url = "http://localhost:4002/attend/check-out";
+  postData(url);
 }
 function reset() {
   information = "";
   alert("Vui long roi khoi tam cua camera va quet lai!");
 }
 
-window.checkin = checkin;
+window.checkout = checkout;
 window.reset = reset;
