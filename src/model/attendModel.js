@@ -4,7 +4,7 @@ const { changeFlag } = require("../helper/iot_mqtt");
 module.exports = {
   get_all: async () => {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT ID, account_name, name from account`;
+      let sql = `SELECT ID from account`;
       let params = [];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
@@ -40,6 +40,31 @@ module.exports = {
         if (result.length) {
           resolve(true);
         } else resolve(false);
+      });
+    });
+  },
+  checkListCheckOut: async (date, account_ID) => {
+    return new Promise((resolve, reject) => {
+      let sql = `select * from iot_data where date = ? and employee_ID = ? order by time desc`;
+      let params = [date, account_ID];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        if (result.length) {
+          resolve(result);
+        } else resolve(false);
+      });
+    });
+  },
+  updateCheckOut: async (form_ID, status_, value, type) => {
+    return new Promise((resolve, reject) => {
+      let sql = `
+      UPDATE iot_data
+      SET status_ = ?, value = ?, type = ?
+      WHERE ID = ?`;
+      let params = [status_, value, type, form_ID];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        resolve(true);
       });
     });
   },
