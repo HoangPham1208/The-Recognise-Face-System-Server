@@ -258,6 +258,10 @@ BEGIN
   ELSE
 	INSERT INTO staff(ID) VALUES (p_employee_id) ;
   END IF;
+  INSERT INTO working_time (ID, begin_at, end_at)
+  VALUES (p_employee_id, "7:30:00", "12:00:00");
+  INSERT INTO working_time (ID, begin_at, end_at)
+  VALUES (p_employee_id, "13:30:00", "17:00:00");
 END$$
 DELIMITER ;
 
