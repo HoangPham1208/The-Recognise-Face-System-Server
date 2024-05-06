@@ -67,7 +67,7 @@ async function startVideo() {
           "ID staff = " +
           information._label +
           " - Name: " +
-          data_dict[information._label].account_name;
+          data_dict[information._label].name;
       } else {
         document.getElementById("recognizedInfo").innerText = "No one";
         information = null;
@@ -94,10 +94,12 @@ async function loadLabeledImages() {
   const labels = labelsData.name_list;
   const labeledFaceDescriptors = await Promise.all(
     labels.map(async (label) => {
+      let data = await fetchData(`http://localhost:4002/attend/getModelList/${label}`)
+      let list = data.message
       const descriptions = [];
-      for (let i = 1; i <= 1; i++) {
+      for (let i = 0; i < list.length; i++) {
         const img = await faceapi.fetchImage(
-          `../labeled_images/${label}/${i}.jpg`
+          `../${list[i]}`
         );
         const detections = await faceapi
           .detectSingleFace(img)
@@ -153,7 +155,7 @@ function postData(url) {
 }
 
 function checkout() {
-  const url = "http://localhost:4002/attend/check_out";
+  const url = "http://localhost:4002/attend/checkout";
   console.log(postData(url));
 }
 function reset() {
@@ -161,5 +163,5 @@ function reset() {
   alert("Vui long roi khoi tam cua camera va quet lai!");
 }
 
-window.checkout = checkout;
+window.checkin = checkin;
 window.reset = reset;

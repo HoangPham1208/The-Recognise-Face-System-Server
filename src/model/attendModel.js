@@ -4,7 +4,7 @@ const { changeFlag } = require("../helper/iot_mqtt");
 module.exports = {
   get_all: async () => {
     return new Promise((resolve, reject) => {
-      let sql = `SELECT ID from account`;
+      let sql = `select account.ID, employee.name from account, employee where account.ID = employee.ID`;
       let params = [];
       db.query(sql, params, (error, result) => {
         if (error) reject(error);
