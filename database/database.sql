@@ -588,14 +588,14 @@ CALL add_account('staff3', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31
 CALL add_account('staff4', '$2a$10$Ob7zA3gQPto7Femww63GWeIPk5.WZ.jGN5qT8jRj5Ip31ooWPHiky','4');
 
 -- Tracking work day
-insert into tracking_work_days values("2024-05-07","",1);
+insert into tracking_work_days values("2024-05-06","",1);
 -- 1,1 mean check in
 -- 1,2 mean check out
-CALL check_in(1, 1, "2024-05-07", "7:15:00", "On time", "good", "first check in for morning_shift");
-CALL check_in(1, 2, "2024-05-07", "7:20:00","Normal", "go out", "check out");
-CALL check_in(1, 1, "2024-05-07", "7:32:00","Normal","go in", "check in");
-CALL check_in(1, 2, "2024-05-07", "12:00:00","Normal", "go out", "check out");
-CALL check_in(1, 1, "2024-05-07", "13:30:00","Late", "late for 30 minutes", "first check in for afternoon_shift");
-CALL check_in(1, 2, "2024-05-07", "15:20:00","Normal", "go out", "check out");
-CALL check_in(1, 1, "2024-05-07", "15:30:00","Normal", "go in", "check in");
-CALL check_in(1, 2, "2024-05-07", "17:20:00","Normal","go out", "check out");
+CALL check_in(1, 1, "2024-05-06", "7:15:00", "On time", "good", "first check in for morning_shift");
+CALL check_in(1, 2, "2024-05-06", "7:20:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-06", "7:32:00","Normal","go in", "check in");
+CALL check_in(1, 2, "2024-05-06", "12:00:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-06", "13:30:00","Late", "late for 30 minutes", "first check in for afternoon_shift");
+CALL check_in(1, 2, "2024-05-06", "15:20:00","Normal", "go out", "check out");
+CALL check_in(1, 1, "2024-05-06", "15:30:00","Normal", "go in", "check in");
+CALL check_in(1, 2, "2024-05-06", "17:20:00","Normal","go out", "check out");

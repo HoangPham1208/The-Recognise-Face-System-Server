@@ -1,13 +1,23 @@
 const cron = require("node-cron");
 const { sendAnnouncement } = require("../../helper/announcement");
-const { get_all, checkFirstCheckIn } = require("../../model/attendModel");
+const {
+  get_all,
+  checkFirstCheckIn,
+  checkListCheckOut,
+} = require("../../model/attendModel");
+const { get } = require("../../routes/authRoute");
+
 const cronExpressions = {
   morning_shift_begin: "15 7 * * 1-6",
   lunch_time_begin: "45 11 * * 1-6",
   afternoon_shift_begin: "15 13 * * 1-6",
   afternoon_shift_end: "15 16 * * 1-6",
+  check_morning_end: "0 12 * * 1-6",
+  check_afternoon_end: "30 16 * * 1-6",
 };
-
+function padZero(number) {
+  return number < 10 ? `0${number}` : number;
+}
 async function notification_before_morning() {
   var date = new Date();
   const formattedDate = `${date.getFullYear()}-${padZero(
@@ -110,6 +120,133 @@ async function notification_check_out() {
   // SSE do, no need to add notification
 }
 
+function isInTimeRange(timeString, startTimeString, endTimeString) {
+  const [hours, minutes, seconds = 0] = timeString.split(":").map(Number);
+  const [startHours, startMinutes, startSeconds = 0] = startTimeString
+    .split(":")
+    .map(Number);
+  const [endHours, endMinutes, endSeconds = 0] = endTimeString
+    .split(":")
+    .map(Number);
+
+  const time = hours * 3600 + minutes * 60 + seconds;
+  const startTime = startHours * 3600 + startMinutes * 60 + startSeconds;
+  const endTime = endHours * 3600 + endMinutes * 60 + endSeconds;
+
+  return time >= startTime && time <= endTime;
+}
+function calculateTime(timeString, endTimeString) {
+  const [hours, minutes, seconds = 0] = timeString.split(":").map(Number);
+  const [endHours, endMinutes, endSeconds = 0] = endTimeString
+    .split(":")
+    .map(Number);
+
+  const time = hours * 3600 + minutes * 60 + seconds;
+  const endTime = endHours * 3600 + endMinutes * 60 + endSeconds;
+
+  return Math.floor((endTime - time) / 60);
+}
+
+async function check_morning_checkout() {
+  var date = new Date();
+  const formattedDate = `${date.getFullYear()}-${padZero(
+    date.getMonth() + 1
+  )}-${padZero(date.getDate())}`;
+  const formattedTime = `${padZero(date.getHours())}:${padZero(
+    date.getMinutes()
+  )}:${padZero(date.getSeconds())}`;
+  const getAll = await get_all();
+  const allOfIds = getAll.map((obj) => obj.ID);
+  const listPromises = allOfIds.map(async (ID) => {
+    const listCheckOut = await checkListCheckOut(formattedDate, ID); // return in desc by time
+    if (listCheckOut) {
+      let myListMorning = [];
+      for (c in listCheckOut) {
+        if (isInTimeRange(listCheckOut[c].time, "7:30:00", "12:00:00"))
+          myListMorning.push(listCheckOut[c]);
+      }
+      // check the last type
+      // 2 case: check in and check out
+      // case 1: check out
+      // case 2 must not happend, it depend on ...
+      if ((myListMorning[0].type = "check out")) {
+        let late_time = calculateTime(myListMorning[0].time, "12:00:00");
+        if (late_time > 15)
+          await updateCheckOut(
+            myListMorning[0].ID,
+            "Soon",
+            "soon for " + late_time + " minutes",
+            "last check out for morning_shift"
+          );
+        else
+          await updateCheckOut(
+            myListMorning[0].ID,
+            "On time",
+            "good",
+            "last check out for morning_shift"
+          );
+      }
+    }
+  });
+  Promise.all(listPromises)
+    .then((results) => {
+      console.log("Done process before morning");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+async function check_afternoon_checkout() {
+  var date = new Date();
+  const formattedDate = `${date.getFullYear()}-${padZero(
+    date.getMonth() + 1
+  )}-${padZero(date.getDate())}`;
+  const formattedTime = `${padZero(date.getHours())}:${padZero(
+    date.getMinutes()
+  )}:${padZero(date.getSeconds())}`;
+  const getAll = await get_all();
+  const allOfIds = getAll.map((obj) => obj.ID);
+  const listPromises = allOfIds.map(async (ID) => {
+    const listCheckOut = await checkListCheckOut(formattedDate, ID); // return in desc by time
+    if (listCheckOut) {
+      let myListMorning = [];
+      for (c in listCheckOut) {
+        if (isInTimeRange(listCheckOut[c].time, "13:30:00", "17:00:00"))
+          myListMorning.push(listCheckOut[c]);
+      }
+      // check the last type
+      // 2 case: check in and check out
+      // case 1: check out
+      // case 2 must not happend, it depend on ...
+      if ((myListMorning[0].type = "check out")) {
+        let late_time = calculateTime(myListMorning[0].time, "17:00:00");
+        if (late_time > 15)
+          await updateCheckOut(
+            myListMorning[0].ID,
+            "Soon",
+            "soon for " + late_time + " minutes",
+            "last check out for afternoon_shift"
+          );
+        else
+          await updateCheckOut(
+            myListMorning[0].ID,
+            "On time",
+            "good",
+            "last check out for afternoon_shift"
+          );
+      }
+    }
+  });
+  Promise.all(listPromises)
+    .then((results) => {
+      console.log("Done process before morning");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 // Schedule the job to run every minute
 function runCron() {
   cron.schedule(
@@ -122,5 +259,7 @@ function runCron() {
     notification_before_afternoon
   );
   cron.schedule(cronExpressions.afternoon_shift_end, notification_check_out);
+  cron.schedule(cronExpressions.check_morning_end, check_morning_checkout);
+  cron.schedule(cronExpressions.check_afternoon_end, check_afternoon_checkout);
 }
-module.exports = { runCron };
+module.exports = { runCron, check_morning_checkout };
