@@ -58,7 +58,7 @@ async function setup() {
       username: process.env.MQTT_user,
       password: process.env.MQTT_password,
     });
-    let topics = [process.env.topic_cambien_1, process.env.topic_cambien_2];
+    let topics = [process.env.topic_cambien_1, process.env.topic_cambien_2, process.env.topic_cambien_3];
     // Check connection
     mqtt_client.on("connect", () => {
       console.log("Connected to MQTT broker");
@@ -71,6 +71,32 @@ async function setup() {
         }
       });
     });
+
+    function sendTopic() {
+      ls = receivedData.toString("utf8").split("#");
+      const temp_pattern = /!1:TEMP:.*/;
+      const lux_pattern = /!2:LUX:.*/;
+      const humi_pattern = /!3:HUMI:.*/;
+      for (i in ls) {
+        let match_temp = temp_pattern.exec(ls[i]);
+        if (match_temp) {
+          let value = ls[i].split(":");
+          mqtt_client.publish(topics[0], value[2]);
+        }
+        let match_lux = lux_pattern.exec(ls[i]);
+        if (match_lux) {
+          let value = ls[i].split(":");
+          mqtt_client.publish(topics[1], value[2]);
+        }
+        let match_humi = humi_pattern.exec(ls[i]);
+        if (match_humi) {
+          let value = ls[i].split(":");
+          mqtt_client.publish(topics[2], value[2]);
+        }
+      }
+    }
+
+    setInterval(sendTopic, 2000);
 
     mqtt_client.on("message", (topic, message) => {
       console.log("Received message on topic", topic, ":", message.toString());
