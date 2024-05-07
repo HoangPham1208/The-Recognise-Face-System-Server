@@ -55,6 +55,16 @@ module.exports = {
       });
     });
   },
+  updateStatusDate: async (date, status, account_ID) => {
+    return new Promise((resolve, reject) => {
+      let sql = `CALL update_status_tracking_absent(?,?,?)`;
+      let params = [date, status, account_ID];
+      db.query(sql, params, (error, result) => {
+        if (error) reject(error);
+        resolve(true);
+      });
+    });
+  },
   updateCheckOut: async (form_ID, status_, value, type) => {
     return new Promise((resolve, reject) => {
       let sql = `

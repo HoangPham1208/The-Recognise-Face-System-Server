@@ -47,7 +47,7 @@ async function startVideo() {
   }
   // setInterval(checkForUpdates, 300000); // update each 5 mins
 
-  const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+  const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.5);
 
   video.addEventListener("play", () => {
     const canvas = faceapi.createCanvasFromMedia(video); // got canvas
@@ -94,13 +94,13 @@ async function loadLabeledImages() {
   const labels = labelsData.name_list;
   const labeledFaceDescriptors = await Promise.all(
     labels.map(async (label) => {
-      let data = await fetchData(`http://localhost:4002/attend/getModelList/${label}`)
-      let list = data.message
+      let data = await fetchData(
+        `http://localhost:4002/attend/getModelList/${label}`
+      );
+      let list = data.message;
       const descriptions = [];
       for (let i = 0; i < list.length; i++) {
-        const img = await faceapi.fetchImage(
-          `../${list[i]}`
-        );
+        const img = await faceapi.fetchImage(`../${list[i]}`);
         const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
@@ -113,7 +113,7 @@ async function loadLabeledImages() {
   return labeledFaceDescriptors;
 }
 
-async function fetchData(url) {
+async function fetchData(url, patch) {
   try {
     const response = await fetch(url);
     if (!response.ok) {

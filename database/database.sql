@@ -597,6 +597,28 @@ END $$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE PROCEDURE update_status_tracking_absent(
+  IN e_date date ,
+  IN e_status char(255),
+  IN e_employee_ID int(10) 
+)
+BEGIN
+  -- insert if not exists
+  INSERT INTO tracking_work_days (date,status,employee_ID) 
+  SELECT e_date, e_status, e_employee_ID
+  WHERE NOT EXISTS (
+	SELECT 1 from tracking_work_days WHERE date = e_date and employee_ID = e_employee_ID
+  );
+  UPDATE tracking_work_days
+  SET status = e_status
+  WHERE date = e_date and employee_ID = e_employee_ID;
+  
+END $$
+
+DELIMITER ;
+
 
 -- --------------------------------------------------------
 INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('1', 'Check In', 'active', 'H1', 'check in');
