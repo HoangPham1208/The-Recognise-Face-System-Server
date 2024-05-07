@@ -4,6 +4,8 @@ const {
   get_all,
   checkFirstCheckIn,
   checkListCheckOut,
+  updateCheckOut,
+  updateStatusDate,
 } = require("../../model/attendModel");
 const { get } = require("../../routes/authRoute");
 
@@ -13,7 +15,8 @@ const cronExpressions = {
   afternoon_shift_begin: "15 13 * * 1-6",
   afternoon_shift_end: "15 16 * * 1-6",
   check_morning_end: "0 12 * * 1-6",
-  check_afternoon_end: "30 16 * * 1-6",
+  check_afternoon_end: "00 17 * * 1-6",
+  end_of_date: "00 18 * * 1-6",
 };
 function padZero(number) {
   return number < 10 ? `0${number}` : number;
@@ -247,6 +250,41 @@ async function check_afternoon_checkout() {
     });
 }
 
+async function check_end_of_date() {
+  var date = new Date();
+  const formattedDate = `${date.getFullYear()}-${padZero(
+    date.getMonth() + 1
+  )}-${padZero(date.getDate())}`;
+  const formattedTime = `${padZero(date.getHours())}:${padZero(
+    date.getMinutes()
+  )}:${padZero(date.getSeconds())}`;
+  const getAll = await get_all();
+  const allOfIds = getAll.map((obj) => obj.ID);
+  const listPromises = allOfIds.map(async (ID) => {
+    const first_check_in_morning = await checkFirstCheckIn(
+      formattedDate,
+      ID,
+      "morning_shift"
+    );
+    const first_check_in_afternoon = await checkFirstCheckIn(
+      formattedDate,
+      ID,
+      "afternoon_shift"
+    );
+    if (!first_check_in_morning && !first_check_in_afternoon) {
+      // this mean that they're not check in working time
+      // or they don't do anything in working days - data = null
+      await updateStatusDate(formattedDate, "absent", ID);
+    }
+  });
+  Promise.all(listPromises)
+    .then((results) => {
+      console.log("Done process at the end of the date");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
 // Schedule the job to run every minute
 function runCron() {
   cron.schedule(
@@ -261,5 +299,6 @@ function runCron() {
   cron.schedule(cronExpressions.afternoon_shift_end, notification_check_out);
   cron.schedule(cronExpressions.check_morning_end, check_morning_checkout);
   cron.schedule(cronExpressions.check_afternoon_end, check_afternoon_checkout);
+  cron.schedule(cronExpressions.end_of_date, check_end_of_date);
 }
 module.exports = { runCron, check_morning_checkout };

@@ -80,20 +80,24 @@ async function setup() {
     console.error("Error setting up:", error);
     console.error("No connected to IoT Device");
   }
-  const pattern = /!4:IR:([0|1])#*/;
+  const pattern = /!4:IR:([0|1])*/;
   // const match = pattern.exec("!4:IR:1#");
   // match[1] == 1
-  function Door() {
+  function checkFlag() {
     try {
       if (microPort) {
-        let match = pattern.exec(receivedData.toString("utf8"));
-        if (!match) {
-          value = +match[1];
-          if (openFlag && value == 1) {
-            microPort.write("1");
-          } else {
-            microPort.write("0");
-            openFlag = false;
+        ls = receivedData.toString("utf8").split("#");
+        for (i in ls) {
+          let match = pattern.exec(ls[i]);
+          if (match) {
+            let value = +match[1];
+            if (openFlag && value == 1) {
+              console.log(123);
+              microPort.write("1");
+            } else {
+              microPort.write("0");
+              openFlag = false;
+            }
           }
         }
       } else {
@@ -106,12 +110,7 @@ async function setup() {
     }
   }
 
-  function checkFlag() {
-    console.log(openFlag);
-  }
-  // setInterval(checkFlag, 1000);
-
-  setInterval(Door, 3000);
+  setInterval(checkFlag, 2000);
 }
 
 function changeFlag() {
