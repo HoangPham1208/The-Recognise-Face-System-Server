@@ -11,11 +11,11 @@ function processData() {
     console.log("Data:", completeMessage);
     console.log("At: ", ts);
     receivedData = Buffer.alloc(0); // Reset receivedData after processing
+  } else {
+    console.log("No data received within 1 second.");
   }
-  // else {
-  //   console.log("No data received within 1 second.");
-  // }
 }
+setInterval(processData, 1000); // CHECK DATA Received FROM MICRO:BIT
 
 async function getPort() {
   try {
@@ -58,57 +58,40 @@ async function setup() {
       username: process.env.MQTT_user,
       password: process.env.MQTT_password,
     });
-    let topics = [process.env.topic_cambien_1, process.env.topic_cambien_2, process.env.topic_cambien_3];
+    let topics = [process.env.topic_cambien_1, process.env.topic_cambien_2];
     // Check connection
     mqtt_client.on("connect", () => {
-      console.log("Connected to MQTT broker");
-      mqtt_client.subscribe(topics, (err) => {
-        if (err) {
-          console.error("Error subscribing to topic:", err);
-        } else {
-          console.log("Subscribed successfully");
-          mqtt_client.publish(topics, "MQTT worked");
-        }
+      topics.forEach((topic) => {
+        mqtt_client.subscribe(topic);
       });
-    });
-
-    function sendTopic() {
-      ls = receivedData.toString("utf8").split("#");
-      const temp_pattern = /!1:TEMP:.*/;
-      const lux_pattern = /!2:LUX:.*/;
-      const humi_pattern = /!3:HUMI:.*/;
-      for (i in ls) {
-        let match_temp = temp_pattern.exec(ls[i]);
-        if (match_temp) {
-          let value = ls[i].split(":");
-          mqtt_client.publish(topics[0], value[2]);
-        }
-        let match_lux = lux_pattern.exec(ls[i]);
-        if (match_lux) {
-          let value = ls[i].split(":");
-          mqtt_client.publish(topics[1], value[2]);
-        }
-        let match_humi = humi_pattern.exec(ls[i]);
-        if (match_humi) {
-          let value = ls[i].split(":");
-          mqtt_client.publish(topics[2], value[2]);
+      function sendTopic() {
+        ls = receivedData.toString("utf8").split("#");
+        const temp_pattern = /!1:TEMP:.*/;
+        const humi_pattern = /!2:HUMI:.*/;
+        for (i in ls) {
+          let match_temp = temp_pattern.exec(ls[i]);
+          if (match_temp) {
+            let value = ls[i].split(":");
+            mqtt_client.publish(topics[0], value[2]);
+          }
+          let match_humi = humi_pattern.exec(ls[i]);
+          if (match_humi) {
+            let value = ls[i].split(":");
+            mqtt_client.publish(topics[1], value[2]);
+          }
         }
       }
-    }
-
-    setInterval(sendTopic, 2000);
+      setInterval(sendTopic, 3000);
+    });
 
     mqtt_client.on("message", (topic, message) => {
       console.log("Received message on topic", topic, ":", message.toString());
     });
-    setInterval(processData, 1000); // CHECK DATA Received FROM MICRO:BIT
   } catch (error) {
     console.error("Error setting up:", error);
     console.error("No connected to IoT Device");
   }
   const pattern = /!4:IR:([0|1])*/;
-  // const match = pattern.exec("!4:IR:1#");
-  // match[1] == 1
   function checkFlag() {
     try {
       if (microPort) {
