@@ -98,7 +98,7 @@ const getAttendanceTrack = async (account_ID) => {
 const getEmployeeDetails = async (account_ID) => {
   return new Promise((resolve, reject) => {
     const sql = `
-    SELECT avatar,name, email, phone_num,address, position, working_days from account, employee
+    SELECT avatar,name, email, phone_num,address, position, working_days, begin_at, end_at from account, employee
     where account.ID = employee.ID  and account.id = ?
     `;
     const params = [account_ID];
