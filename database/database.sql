@@ -25,11 +25,13 @@ CREATE TABLE `account` (
 CREATE TABLE `employee` (
   `ID` int(10) NOT NULL,
   `position` char(255),
-  `working_days` int(5) NOT NULL,
+  `working_days` int(5),
   `address` char(255),
   `email` char(255),
   `name` char(255),
-  `phone_num` char(15)
+  `phone_num` char(15),
+  `begin_at` date NOT NULL,
+  `end_at` date NOT NULL
 ) ;
 
 ALTER TABLE `employee`
@@ -559,19 +561,41 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- keep working days
 
+DELIMITER $$
 
--- --------------------------------------------------------
--- Insert some data
--- CALL send_form(4, 1, 'send form 1');
--- CALL send_form(5, 2, 'send form 2');
--- CALL send_form(6, 3, 'send form 3');
+CREATE PROCEDURE insert_employee(
+    IN e_ID INT(10),
+    IN e_position CHAR(255),
+    IN e_address CHAR(255),
+    IN e_email CHAR(255),
+    IN e_name CHAR(255),
+    IN e_phone_num CHAR(15),
+    IN e_begin_date DATE,
+    IN e_end_date DATE
+)
+BEGIN
+    DECLARE cur_date DATE;
+    DECLARE sundays_count INT DEFAULT 0;
+    DECLARE days_count INT;
 
--- CALL respond_form(4, 1, 'respond form 1');
--- CALL respond_form(5, 2, 'respond form 2');
--- CALL respond_form(6, 3, 'respond form 3');
+    SET cur_date = e_begin_date;
 
--- CALL update_avatar(1,'images/avatar_1.png');
+    WHILE cur_date <= e_end_date DO
+        IF DAYOFWEEK(cur_date) = 1 THEN
+            SET sundays_count = sundays_count + 1;
+        END IF;
+        SET cur_date = DATE_ADD(cur_date, INTERVAL 1 DAY);
+    END WHILE;
+
+    SET days_count = DATEDIFF(e_end_date, e_begin_date) + 1 - sundays_count;
+
+    INSERT INTO employee (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`, `begin_at`, `end_at`) 
+    VALUES (e_ID, e_position, days_count, e_address, e_email, e_name, e_phone_num, e_begin_date, e_end_date);
+END $$
+
+DELIMITER ;
 
 
 -- --------------------------------------------------------
@@ -579,11 +603,11 @@ INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location
 INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('2', 'Check Out', 'active', 'H2', 'check out');
 
 -- Employee Data
-INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('1', 'manager', '1000', '1 St. AAA', '1A@gmail.com', 'A.A.A', '12345678');
-INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('2', 'manager', '1000', '2 St. BBB', '2B@gmail.com', 'B.B.B', '12345678');
-INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('3', 'staff', '200', '3 St. CCC', '3C@gmail.com', 'C.C.C', '12345678');
-INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('4', 'staff', '300', '4 St. DDD', '4D@gmail.com', 'D.D.D', '12345678');
-INSERT INTO `facial_recognition`.`employee` (`ID`, `position`, `working_days`, `address`, `email`, `name`, `phone_num`) VALUES ('5', 'staff', '400', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678');
+CALL insert_employee ('1', 'manager', '1 St. AAA', '1A@gmail.com', 'A.A.A', '12345678', '2024-01-01', '2024-05-31');
+CALL insert_employee ('2', 'manager', '2 St. BBB', '2B@gmail.com', 'B.B.B', '12345678', '2024-01-15', '2024-05-31');
+CALL insert_employee ('3', 'staff', '3 St. CCC', '3C@gmail.com', 'C.C.C', '12345678' , '2024-01-31', '2024-05-31');
+CALL insert_employee ('4', 'staff', '4 St. DDD', '4D@gmail.com', 'D.D.D', '12345678', '2024-02-15', '2024-05-31');
+CALL insert_employee ('5', 'staff', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678', '2024-03-30', '2024-05-31');
 
 -- Insert some data
 -- That hash mean "password"
