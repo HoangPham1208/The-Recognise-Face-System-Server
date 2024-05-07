@@ -625,11 +625,13 @@ INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location
 INSERT INTO `facial_recognition`.`iot_device` (`ID`, `name`, `status`, `location`, `role`) VALUES ('2', 'Check Out', 'active', 'H2', 'check out');
 
 -- Employee Data
-CALL insert_employee ('1', 'manager', '1 St. AAA', '1A@gmail.com', 'A.A.A', '12345678', '2024-01-01', '2024-05-31');
-CALL insert_employee ('2', 'manager', '2 St. BBB', '2B@gmail.com', 'B.B.B', '12345678', '2024-01-15', '2024-05-31');
-CALL insert_employee ('3', 'staff', '3 St. CCC', '3C@gmail.com', 'C.C.C', '12345678' , '2024-01-31', '2024-05-31');
-CALL insert_employee ('4', 'staff', '4 St. DDD', '4D@gmail.com', 'D.D.D', '12345678', '2024-02-15', '2024-05-31');
-CALL insert_employee ('5', 'staff', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678', '2024-03-30', '2024-05-31');
+-- use 1
+CALL insert_employee ('1', 'manager', '1 St. AAA', '1A@gmail.com', 'A.A.A', '12345678', '2024-03-01', '2024-05-31');
+CALL insert_employee ('2', 'manager', '2 St. BBB', '2B@gmail.com', 'B.B.B', '12345678', '2024-03-15', '2024-05-31');
+-- use 3,4
+CALL insert_employee ('3', 'staff', '3 St. CCC', '3C@gmail.com', 'C.C.C', '12345678' , '2024-03-20', '2024-05-31');
+CALL insert_employee ('4', 'staff', '4 St. DDD', '4D@gmail.com', 'D.D.D', '12345678', '2024-04-01', '2024-05-31');
+CALL insert_employee ('5', 'staff', '5 St. EEE', '5E@gmail.com', 'E.E.E', '12345678', '2024-04-01', '2024-05-31');
 
 -- Insert some data
 -- That hash mean "password"
