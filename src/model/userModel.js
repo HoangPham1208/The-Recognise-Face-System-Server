@@ -81,7 +81,7 @@ const getAttendanceTrack = async (account_ID) => {
     const sql = `
     SELECT idata.date, idata.time, idata.type, idata.value, idev.name, idev.location FROM iot_data as idata, iot_device as idev
     WHERE idata.device_ID = idev.ID and idata.employee_ID = ?
-    ORDER BY idata.time
+    ORDER BY idata.date asc, time
     `;
     const params = [account_ID];
     db.query(sql, params, (err, result) => {
