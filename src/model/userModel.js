@@ -114,7 +114,14 @@ const getEmployeeDetails = async (account_ID) => {
           if (err) reject(err);
           let part2 = result;
           part1[0]["shift"] = part2;
-          resolve(part1[0]);
+          const sql3 = `SELECT count(*) as number FROM tracking_work_days where status = "Absent" and employee_ID = ?`;
+          const params3 = [account_ID];
+          db.query(sql3, params3, (err, result) => {
+            if (err) reject(err);
+            let part3 = result;
+            part1[0]["absent_days"] = part3[0]['number'];
+            resolve(part1[0]);
+          });
         });
       } else {
         resolve(false);

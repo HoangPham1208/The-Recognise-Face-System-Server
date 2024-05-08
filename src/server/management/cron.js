@@ -275,6 +275,8 @@ async function check_end_of_date() {
       // this mean that they're not check in working time
       // or they don't do anything in working days - data = null
       await updateStatusDate(formattedDate, "Absent", ID);
+    } else {
+      await updateStatusDate(formattedDate, "Completed", ID);
     }
   });
   Promise.all(listPromises)
