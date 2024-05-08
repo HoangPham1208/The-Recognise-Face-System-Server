@@ -24,15 +24,58 @@
       canvas {
         position: absolute;
       }
+      .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .yes-button {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      .yes-button:hover {
+        background-color: #45a049;
+      }
+
+      .no-button {
+        background-color: #f44336;
+        color: white;
+        margin-left: 10px;
+      }
+
+      .no-button:hover {
+        background-color: #d32f2f;
+      }
     </style>
   </head>
   <body>
-    <section>CHECK OUT</section>
-    <video id="video" width="720" height="560" autoplay="true"></video>
+    <section>
+      <div>CHECK OUT</div>
+      <div>Temperature: <span id = "temp"></span> &deg;C  </div>
+      <div>Data receive at: <span id = "temp_time"></span></div>
+      <div>Humidity: <span id = "humi"></span> % </div>
+      <div>Data receive at: <span id = "humi_time"></span></div>
+    </section>
+    <section>
+      <video id="video" width="720" height="560" autoplay="true"></video>
+    </section>
     <section id="REC">
       <p><span id="recognizedInfo"></span></p>
-      <button onclick="window.checkout()">YES</button>
-      <button onclick="window.reset()">NO</button>
     </section>
+    <div class="button-container">
+    <button class="yes-button" onclick="window.checkout()">YES</button>
+    <button class="no-button" onclick="window.reset()">NO</button>
+  </div>
   </body>
 </html>

@@ -98,7 +98,7 @@ async function loadLabeledImages() {
         `http://localhost:4002/attend/getModelList/${label}`
       );
       let list = data.message;
-      console.log(list)
+      console.log(list);
       const descriptions = [];
       for (let i = 0; i < list.length; i++) {
         const img = await faceapi.fetchImage(`../${list[i]}`);
@@ -154,6 +154,31 @@ function postData(url) {
       console.error("There was a problem posting the data:", error);
     });
 }
+
+function fetchTempAndHumi() {
+  fetch("https://io.adafruit.com/api/v2/QuangBang/feeds/cambien1")
+    .then((response) => response.json())
+    .then((data) => {
+      // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
+      document.getElementById("temp").textContent = data.last_value;
+      document.getElementById("temp_time").textContent =  data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+    })
+    .catch((error) => console.error("Error fetching data:", error));
+  fetch("https://io.adafruit.com/api/v2/QuangBang/feeds/cambien3")
+    .then((response) => response.json())
+    .then((data) => {
+      // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
+      document.getElementById("humi").textContent = data.last_value;
+      document.getElementById("humi_time").textContent = data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+    })
+    .catch((error) => console.error("Error fetching data:", error));
+}
+
+// Call fetchDataAndUpdate initially
+fetchTempAndHumi()
+
+// Call fetchDataAndUpdate every 5 seconds
+setInterval(fetchTempAndHumi, 5000);
 
 function checkin() {
   const url = "http://localhost:4002/attend/check-in";
