@@ -33,7 +33,7 @@ const getFaceModelList = async (req, res) => {
       return res.status(403).json({ status: "error", message: "Unauthorized" });
 
     const model = await managerModel.getFaceModelList(req.params.id);
-    if (!model) {
+    if (!model.face_model) {
       return res
         .status(404)
         .json({ status: "empty", message: "No face model available" });

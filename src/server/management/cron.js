@@ -172,21 +172,21 @@ async function check_morning_checkout() {
       // 2 case: check in and check out
       // case 1: check out
       // case 2 must not happend, it depend on ...
-      if ((myListMorning[0].type = "check out")) {
+      if ((myListMorning[0].type = "Check out")) {
         let late_time = calculateTime(myListMorning[0].time, "12:00:00");
         if (late_time > 15)
           await updateCheckOut(
             myListMorning[0].ID,
             "Soon",
             "soon for " + late_time + " minutes",
-            "last check out for morning_shift"
+            "Last check out for morning_shift"
           );
         else
           await updateCheckOut(
             myListMorning[0].ID,
             "On time",
-            "good",
-            "last check out for morning_shift"
+            "Good",
+            "Last check out for morning_shift"
           );
       }
     }
@@ -228,15 +228,15 @@ async function check_afternoon_checkout() {
           await updateCheckOut(
             myListMorning[0].ID,
             "Soon",
-            "soon for " + late_time + " minutes",
-            "last check out for afternoon_shift"
+            "Soon for " + late_time + " minutes",
+            "Last check out for afternoon_shift"
           );
         else
           await updateCheckOut(
             myListMorning[0].ID,
             "On time",
-            "good",
-            "last check out for afternoon_shift"
+            "Good",
+            "Last check out for afternoon_shift"
           );
       }
     }
@@ -274,7 +274,7 @@ async function check_end_of_date() {
     if (!first_check_in_morning && !first_check_in_afternoon) {
       // this mean that they're not check in working time
       // or they don't do anything in working days - data = null
-      await updateStatusDate(formattedDate, "absent", ID);
+      await updateStatusDate(formattedDate, "Absent", ID);
     }
   });
   Promise.all(listPromises)

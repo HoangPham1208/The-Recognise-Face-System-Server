@@ -11,9 +11,10 @@ function processData() {
     console.log("Data:", completeMessage);
     console.log("At: ", ts);
     receivedData = Buffer.alloc(0); // Reset receivedData after processing
-  } else {
-    console.log("No data received within 1 second.");
   }
+  //  else {
+  //   console.log("No data received within 1 second.");
+  // }
 }
 setInterval(processData, 1000); // CHECK DATA Received FROM MICRO:BIT
 

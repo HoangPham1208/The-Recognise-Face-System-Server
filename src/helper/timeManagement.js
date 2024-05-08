@@ -70,22 +70,22 @@ async function process(check_type, account_ID, check_in_func) {
   var type = "";
   const value_shift = getShift(date);
   let status_ = "Normal"
-  if (check_type == "check_in") {
+  if (check_type == "Check_in") {
     if (value_shift == "morning_before") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
-        value = "go in";
-        type = "check in";
+        value = "Go in";
+        type = "Check in";
       } else {
-        value = "good";
-        type = "first check in for morning_shift";
+        value = "Good";
+        type = "First check in for morning_shift";
         status_ = "On time"
       }
     } else if (value_shift == "morning_shift") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
-        value = "go in";
-        type = "check in";
+        value = "Go in";
+        type = "Check in";
       } else {
         const check = checkFirstCheckIn(date, value_shift);
         value = check.value;
@@ -93,13 +93,13 @@ async function process(check_type, account_ID, check_in_func) {
         status_ = check.status_
       }
     } else if (value_shift == "lunch_time") {
-      value = "go in";
-      type = "check in";
+      value = "Go in";
+      type = "Check in";
     } else if (value_shift == "afternoon_shift") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
-        value = "go in";
-        type = "check in";
+        value = "Go in";
+        type = "Check in";
       } else {
         const check = checkFirstCheckIn(date, value_shift);
         value = check.value;
@@ -107,14 +107,14 @@ async function process(check_type, account_ID, check_in_func) {
         status_ = check.status_
       }
     } else {
-      value = "go in";
-      type = "out of work";
+      value = "Go in";
+      type = "Out of work";
     }
   }
-  if (check_type == "check_out") {
+  if (check_type == "Check_out") {
     // Process data again after time
-    value = "go out";
-    type = "check out";
+    value = "Go out";
+    type = "Check out";
   }
   return { formattedDate, formattedTime, status_, value, type };
 }
@@ -127,7 +127,7 @@ function checkFirstCheckIn(date, value_shift) {
   if (value_shift == "morning_shift") {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
     const begin_in_minutes = begin_morning_hours * 60 + begin_morning_minutes;
-    value = "late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
+    value = "Late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
     status_ = "Late";
   } else if (value_shift == "afternoon_shift") {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
@@ -135,14 +135,14 @@ function checkFirstCheckIn(date, value_shift) {
       begin_afternoon_hours * 60 + begin_afternoon_minutes;
     if (arrival_in_minutes - begin_in_minutes > penalty) {
       value =
-        "late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
+        "Late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
       status_ = "Late";
     } else {
-      value = "good";
+      value = "Good";
       status_ = "Normal";
     }
   }
-  type = "first check in for " + value_shift;
+  type = "First check in for " + value_shift;
 
   return { status_, value, type };
 }
