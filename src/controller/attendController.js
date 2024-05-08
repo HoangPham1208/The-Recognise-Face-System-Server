@@ -18,7 +18,7 @@ module.exports = {
     }
     const device_ID = process.env.CAMERA_CHECK_IN;
     const myData = await data_process(
-      "check_in",
+      "Check_in",
       account_ID,
       attendModel.checkFirstCheckIn
     );
@@ -47,7 +47,7 @@ module.exports = {
           value
         );
         return res.status(200).json({ status: "OK" });
-      } else return res.status(401).json({ status: "check_in failed" });
+      } else return res.status(401).json({ status: "Check_in failed" });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
@@ -62,7 +62,7 @@ module.exports = {
     }
     const device_ID = process.env.CAMERA_CHECK_OUT;
     const myData = await data_process(
-      "check_out",
+      "Check_out",
       account_ID,
       attendModel.checkFirstCheckIn
     );
@@ -91,7 +91,7 @@ module.exports = {
           value
         );
         return res.status(200).json({ status: "OK" });
-      } else return res.status(401).json({ status: "check_out failed" });
+      } else return res.status(401).json({ status: "Check_out failed" });
     } catch (error) {
       return res.status(500).json({ status: "error", message: error.message });
     }
