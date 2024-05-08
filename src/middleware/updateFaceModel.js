@@ -19,6 +19,7 @@ function updateFaceModel(file_field) {
     const storage = multer.diskStorage({
       destination: dir,
       filename: (req, file, cb) => {
+        console.log(file)
         // convert all image to jpg
         cb(null, count + ".jpg"); // Use timestamp to generate a unique filename
       },

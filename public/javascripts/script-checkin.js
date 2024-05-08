@@ -98,6 +98,7 @@ async function loadLabeledImages() {
         `http://localhost:4002/attend/getModelList/${label}`
       );
       let list = data.message;
+      console.log(list)
       const descriptions = [];
       for (let i = 0; i < list.length; i++) {
         const img = await faceapi.fetchImage(`../${list[i]}`);
