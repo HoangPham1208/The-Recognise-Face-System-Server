@@ -28,7 +28,7 @@ function updateFaceModel(file_field) {
       storage: storage,
       limits: {
         fieldNameSize: 300,
-        fileSize: 1024 * 1024, // 1 Mb allowed
+        fileSize: 1024 * 1024 * 10, // 10 Mb allowed
       },
       fileFilter: function (req, file, callback) {
         const ext = path.extname(file.originalname);
@@ -39,10 +39,10 @@ function updateFaceModel(file_field) {
           });
         }
         const fileSize = parseInt(req.headers["content-length"]);
-        if (fileSize > 1024 * 1024) {
+        if (fileSize > 1024 * 1024 * 10) {
           return res.status(400).json({
             status: "Bad request",
-            message: "File size exceeds the limit (1MB)",
+            message: "File size exceeds the limit (10MB)",
           });
         }
         count++;
