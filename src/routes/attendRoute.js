@@ -9,6 +9,11 @@ const { getFaceModelList } = require("../model/managerModel");
 router.get("/getAll", attendController.get_all);
 router.get("/getModelList/:id", async (req, res) => {
   const model = await getFaceModelList(req.params.id);
+  if (!model.face_model) {
+    return res
+      .status(404)
+      .json({ status: "empty", message: "No face model available" });
+  }
   const directoryPath = path.join(__dirname, "../../", model.face_model);
   let my_model_images = [];
   fs.readdir(directoryPath, function (err, files) {
