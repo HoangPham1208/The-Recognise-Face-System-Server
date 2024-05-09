@@ -171,7 +171,7 @@ const getAllAttendanceTrack = async (req, res) => {
     const check = await isManager(req.user.id);
     if (!check)
       return res.status(403).json({ status: "error", message: "Unauthorized" });
-    const employees = await managerModel.getAllAttendanceTrack();
+    const employees = await managerModel.getAllAttendanceTrack(req.query.id);
     if (!employees) {
       return res
         .status(404)

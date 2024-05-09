@@ -24,12 +24,11 @@ const getFaceModelList = async (user_id) => {
     const params = [user_id];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
-      if (result.length) resolve(result[0])
-      else resolve(false)
+      if (result.length) resolve(result[0]);
+      else resolve(false);
     });
   });
 };
-
 
 const updateEmployee = async (
   employee_ID,
@@ -103,7 +102,7 @@ const getEmployeeData = async (employee_ID) => {
     let sql = `
     SELECT e.ID, e.position, e.working_days, e.address, e.email, e.name, e.phone_num, a.status 
     FROM employee as e LEFT OUTER join account as a 
-    ON e.ID = a.ID`
+    ON e.ID = a.ID`;
     if (employee_ID) sql += ` WHERE e.ID = ?`;
     const params = [employee_ID];
     db.query(sql, params, (err, result) => {
@@ -112,13 +111,22 @@ const getEmployeeData = async (employee_ID) => {
     });
   });
 };
-const getAllAttendanceTrack = async () => {
+const getAllAttendanceTrack = async (ID) => {
   return new Promise((resolve, reject) => {
-    const sql = `
+    let sql;
+    let params = [];
+    if (!ID)
+      sql = `
     SELECT i.ID AS Track_ID, i.employee_ID, i.device_ID, e.name, e.position, i.date, i.time, i.status, i.value, i.type 
     FROM iot_data AS i, employee AS e 
     WHERE i.employee_ID = e.ID;`;
-    const params = [];
+    else {
+      sql = `
+    SELECT i.ID AS Track_ID, i.employee_ID, i.device_ID, e.name, e.position, i.date, i.time, i.status, i.value, i.type 
+    FROM iot_data AS i, employee AS e 
+    WHERE i.employee_ID = ?;`;
+      params = [ID];
+    }
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
       if (result.length) resolve(result);
@@ -134,5 +142,5 @@ module.exports = {
   getForm,
   respondForm,
   getEmployeeData,
-  getAllAttendanceTrack
+  getAllAttendanceTrack,
 };
