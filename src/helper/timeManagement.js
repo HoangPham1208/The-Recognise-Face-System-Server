@@ -40,20 +40,20 @@ function getShift(date) {
   var minutes = date.getMinutes();
   if (valid_check_in_begin_hours <= hour && hour <= begin_morning_hours) {
     if (hour == begin_morning_hours && minutes > begin_morning_minutes)
-      return "morning_shift";
-    else return "morning_before";
+      return "morning shift";
+    else return "morning before";
   } else if (begin_morning_hours <= hour && hour <= end_morning_hours) {
     if (hour == end_morning_hours && minutes > end_morning_minutes)
-      return "lunch_time";
-    else return "morning_shift";
+      return "lunch time";
+    else return "morning shift";
   } else if (begin_lunch_hours <= hour && hour <= end_lunch_hours) {
     if (hour == end_lunch_hours && minutes > end_lunch_minutes)
-      return "afternoon_shift";
-    else return "lunch_time";
+      return "afternoon shift";
+    else return "lunch time";
   } else if (begin_afternoon_hours <= hour && hour <= end_afternoon_hours) {
     if (hour == end_afternoon_hours && minutes > end_afternoon_minutes)
-      return "afternoon_after";
-    else return "afternoon_shift";
+      return "afternoon after";
+    else return "afternoon shift";
   } else return "out of time";
 }
 async function process(check_type, account_ID, check_in_func) {
@@ -71,17 +71,17 @@ async function process(check_type, account_ID, check_in_func) {
   const value_shift = getShift(date);
   let status_ = "Normal"
   if (check_type == "Check_in") {
-    if (value_shift == "morning_before") {
+    if (value_shift == "morning before") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "Go in";
         type = "Check in";
       } else {
         value = "Good";
-        type = "First check in for morning_shift";
+        type = "First check in for morning shift";
         status_ = "On time"
       }
-    } else if (value_shift == "morning_shift") {
+    } else if (value_shift == "morning shift") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "Go in";
@@ -92,10 +92,10 @@ async function process(check_type, account_ID, check_in_func) {
         type = check.type;
         status_ = check.status_
       }
-    } else if (value_shift == "lunch_time") {
+    } else if (value_shift == "lunch time") {
       value = "Go in";
       type = "Check in";
-    } else if (value_shift == "afternoon_shift") {
+    } else if (value_shift == "afternoon shift") {
       const check = await check_in_func(formattedDate, account_ID, value_shift);
       if (check) {
         value = "Go in";
@@ -111,7 +111,7 @@ async function process(check_type, account_ID, check_in_func) {
       type = "Out of work";
     }
   }
-  if (check_type == "Check_out") {
+  if (check_type == "Check out") {
     // Process data again after time
     value = "Go out";
     type = "Check out";
@@ -124,12 +124,12 @@ function padZero(num) {
 }
 function checkFirstCheckIn(date, value_shift) {
   const [arrival_hours, arrival_minutes] = [date.getHours(), date.getMinutes()];
-  if (value_shift == "morning_shift") {
+  if (value_shift == "morning shift") {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
     const begin_in_minutes = begin_morning_hours * 60 + begin_morning_minutes;
     value = "Late for " + (arrival_in_minutes - begin_in_minutes) + " minutes";
     status_ = "Late";
-  } else if (value_shift == "afternoon_shift") {
+  } else if (value_shift == "afternoon shift") {
     const arrival_in_minutes = arrival_hours * 60 + arrival_minutes;
     const begin_in_minutes =
       begin_afternoon_hours * 60 + begin_afternoon_minutes;

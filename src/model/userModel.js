@@ -79,7 +79,7 @@ const getOtp = async (account_ID) => {
 const getAttendanceTrack = async (account_ID) => {
   return new Promise((resolve, reject) => {
     const sql = `
-    SELECT idata.date, idata.time, idata.type, idata.value, idev.name, idev.location FROM iot_data as idata, iot_device as idev
+    SELECT idata.date, idata.time, idata.type, idata.status, idata.value, idev.name, idev.ID as device_ID, idev.location FROM iot_data as idata, iot_device as idev
     WHERE idata.device_ID = idev.ID and idata.employee_ID = ?
     ORDER BY idata.date asc, time
     `;
@@ -176,6 +176,8 @@ const getAvatar = async (account_ID) => {
   });
 };
 
+
+
 module.exports = {
   updateAvatar,
   changePassword,
@@ -188,5 +190,5 @@ module.exports = {
   sendForm,
   getForm,
   getNotification,
-  getAvatar,
+  getAvatar
 };
