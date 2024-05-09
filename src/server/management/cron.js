@@ -32,7 +32,7 @@ async function notification_before_morning() {
   const getAll = await get_all();
   const allOfIds = getAll.map((obj) => obj.ID);
   const listPromises = allOfIds.map(async (ID) => {
-    const check = await checkFirstCheckIn(formattedDate, ID, "morning_shift");
+    const check = await checkFirstCheckIn(formattedDate, ID, "morning shift");
     if (!check) {
       const message = "You have 15 mins left to check in at morning";
       sendAnnouncement(ID, message);
@@ -83,7 +83,7 @@ async function notification_before_afternoon() {
   const getAll = await get_all();
   const allOfIds = getAll.map((obj) => obj.ID);
   const listPromises = allOfIds.map(async (ID) => {
-    const check = await checkFirstCheckIn(formattedDate, ID, "afternoon_shift");
+    const check = await checkFirstCheckIn(formattedDate, ID, "afternoon shift");
     if (!check) {
       const message = "You have 15 mins left to check in at afternoon";
       sendAnnouncement(ID, message);
@@ -179,14 +179,14 @@ async function check_morning_checkout() {
             myListMorning[0].ID,
             "Soon",
             "soon for " + late_time + " minutes",
-            "Last check out for morning_shift"
+            "Last check out for morning shift"
           );
         else
           await updateCheckOut(
             myListMorning[0].ID,
             "On time",
             "Good",
-            "Last check out for morning_shift"
+            "Last check out for morning shift"
           );
       }
     }
@@ -229,14 +229,14 @@ async function check_afternoon_checkout() {
             myListMorning[0].ID,
             "Soon",
             "Soon for " + late_time + " minutes",
-            "Last check out for afternoon_shift"
+            "Last check out for afternoon shift"
           );
         else
           await updateCheckOut(
             myListMorning[0].ID,
             "On time",
             "Good",
-            "Last check out for afternoon_shift"
+            "Last check out for afternoon shift"
           );
       }
     }
@@ -264,12 +264,12 @@ async function check_end_of_date() {
     const first_check_in_morning = await checkFirstCheckIn(
       formattedDate,
       ID,
-      "morning_shift"
+      "morning shift"
     );
     const first_check_in_afternoon = await checkFirstCheckIn(
       formattedDate,
       ID,
-      "afternoon_shift"
+      "afternoon shift"
     );
     if (!first_check_in_morning && !first_check_in_afternoon) {
       // this mean that they're not check in working time

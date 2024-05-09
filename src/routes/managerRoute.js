@@ -20,5 +20,5 @@ router.put("/updateEmployee", verifyToken, managerController.updateEmployee);
 router.get("/getForm", verifyToken, managerController.getForm);
 router.post("/respondForm", verifyToken, managerController.respondForm);
 router.get("/getEmployee", verifyToken, managerController.getEmployeeData);
-
+router.get("/getAllAttendanceTrack", verifyToken, managerController.getAllAttendanceTrack)
 module.exports = router;

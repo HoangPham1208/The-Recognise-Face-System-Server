@@ -166,6 +166,23 @@ const getEmployeeData = async (req, res) => {
   }
 };
 
+const getAllAttendanceTrack = async (req, res) => {
+  try {
+    const check = await isManager(req.user.id);
+    if (!check)
+      return res.status(403).json({ status: "error", message: "Unauthorized" });
+    const employees = await managerModel.getAllAttendanceTrack();
+    if (!employees) {
+      return res
+        .status(404)
+        .json({ status: "empty", message: "No employee data" });
+    }
+    return res.status(200).json({ status: "ok", message: employees });
+  } catch (err) {
+    return res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
 module.exports = {
   updateFaceModel,
   getFaceModelList,
@@ -174,4 +191,5 @@ module.exports = {
   getForm,
   respondForm,
   getEmployeeData,
+  getAllAttendanceTrack
 };

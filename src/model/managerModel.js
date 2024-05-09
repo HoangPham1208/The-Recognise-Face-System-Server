@@ -112,6 +112,17 @@ const getEmployeeData = async (employee_ID) => {
     });
   });
 };
+const getAllAttendanceTrack = async () => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM iot_data;`;
+    const params = [];
+    db.query(sql, params, (err, result) => {
+      if (err) reject(err);
+      if (result.length) resolve(result);
+      else resolve(false);
+    });
+  });
+};
 
 module.exports = {
   updateFaceModel,
@@ -120,4 +131,5 @@ module.exports = {
   getForm,
   respondForm,
   getEmployeeData,
+  getAllAttendanceTrack
 };
