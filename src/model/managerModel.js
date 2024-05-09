@@ -114,7 +114,10 @@ const getEmployeeData = async (employee_ID) => {
 };
 const getAllAttendanceTrack = async () => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM iot_data;`;
+    const sql = `
+    SELECT i.ID AS Track_ID, i.employee_ID, i.device_ID, e.name, e.position, i.date, i.time, i.status, i.value, i.type 
+    FROM iot_data AS i, employee AS e 
+    WHERE i.employee_ID = e.ID;`;
     const params = [];
     db.query(sql, params, (err, result) => {
       if (err) reject(err);
