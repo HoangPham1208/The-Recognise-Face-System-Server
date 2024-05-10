@@ -55,6 +55,31 @@ app.get("/labeled", function (req, res) {
   });
 });
 
+// SSE
+const verifyToken = require("../../middleware/authentication");
+const { createSession } = require("better-sse");
+const sessions = {};
+module.exports.sessions = sessions;
+
+app.get("/sse", async (req, res) => {
+  const session = await createSession(req, res);
+  const clientId = req.user.id;
+  sessions[clientId] = session;
+  setInterval(() => {
+    if (sessions[clientId])
+      if (session[clientId].isConnected) session.push(1);
+      else delete sessions[clientId];
+  }, 1000);
+});
+
+app.get("/index", function (req, res) {
+  res.sendFile(path.join(__dirname, "../../../public/views/index.html"));
+});
+
+// Crontab setup
+const { runCron } = require("./cron");
+runCron();
+
 var Router = require("../../routes/index_iot");
 Router(app);
 

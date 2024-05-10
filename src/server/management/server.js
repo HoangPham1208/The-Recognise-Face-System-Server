@@ -5,7 +5,6 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 var bodyParser = require("body-parser");
-const formidable = require("express-formidable");
 
 require("dotenv").config();
 
@@ -24,28 +23,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Route in routes
 Router(app);
-
-// SSE
-const verifyToken = require("../../middleware/authentication");
-const { createSession } = require("better-sse");
-const sessions = {};
-module.exports.sessions = sessions;
-
-app.get("/sse", verifyToken, async (req, res) => {
-  const session = await createSession(req, res);
-  const clientId = req.user.id;
-  sessions[clientId] = session;
-  session.push(clientId);
-});
-
-// Crontab setup
-const { runCron, check_morning_checkout } = require("./cron");
-runCron();
-
-app.get("/lmao", async (req, res) => {
-  check_morning_checkout();
-  return res.status(200).json({ status: "good" });
-});
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Our server is running on port ${process.env.SERVER_PORT}`);
