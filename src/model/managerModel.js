@@ -124,14 +124,14 @@ const getAllAttendanceTrack = async (employee_ID, Track_ID) => {
       sql = `
     SELECT i.ID AS Track_ID, i.employee_ID, i.device_ID, e.name, e.position, i.date, i.time, i.status, i.value, i.type 
     FROM iot_data AS i, employee AS e 
-    WHERE i.employee_ID = ?;`;
+    WHERE i.employee_ID = e.ID and i.employee_ID = ?;`;
       params = [employee_ID];
     }
     else{
       sql = `
       SELECT i.ID AS Track_ID, i.employee_ID, i.device_ID, e.name, e.position, i.date, i.time, i.status, i.value, i.type 
       FROM iot_data AS i, employee AS e 
-      WHERE i.ID = ?;`;
+      WHERE i.employee_ID = e.ID and i.ID = ?;`;
         params = [Track_ID];
     }
     db.query(sql, params, (err, result) => {
