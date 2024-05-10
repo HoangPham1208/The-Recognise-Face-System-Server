@@ -34,6 +34,7 @@
     "server-events-nodejs": "^0.2.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
+    "speakeasy": "^2.0.0",
     "sse": "^0.0.8",
     "ws": "^8.16.0"
   },

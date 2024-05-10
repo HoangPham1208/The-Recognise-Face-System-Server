@@ -1,7 +1,8 @@
 const attendModel = require("../model/attendModel");
 const data_process = require("../helper/timeManagement");
 const { sendAnnouncement } = require("../helper/announcement");
-
+const speakeasy = require("speakeasy");
+const SPEAKEASY_CONFIG = require("../config/speakeasy.json");
 module.exports = {
   get_all: async (req, res) => {
     const data = await attendModel.get_all();
@@ -105,7 +106,7 @@ module.exports = {
     }
   },
   check_in_otp: async (req, res) => {
-    const  account_ID  = req.user.id;
+    const account_ID = req.user.id;
     if (!account_ID) {
       return res.status(400).json({
         status: "failed",
@@ -118,12 +119,31 @@ module.exports = {
       account_ID,
       attendModel.checkFirstCheckIn
     );
+    console.log(myData);
     const date = myData.formattedDate;
     const time = myData.formattedTime;
     const status_ = myData.status_;
     const value = myData.value;
     const type = myData.type;
     try {
+      const otp = req.body.otp;
+      if (!otp) {
+        return res
+          .status(404)
+          .json({ status: "error", message: "Not found Otp!" });
+      }
+      const isValidOtp = speakeasy.totp.verify({
+        secret: process.env.OTP_SECRET,
+        token: otp,
+        step: SPEAKEASY_CONFIG.step,
+        digits: SPEAKEASY_CONFIG.digits,
+        encoding: SPEAKEASY_CONFIG.encoding,
+      });
+      if (!isValidOtp) {
+        return res
+          .status(403)
+          .json({ status: "error", message: "Invalid otp!" });
+      }
       const result = await attendModel.check_in_out(
         account_ID,
         device_ID,
@@ -153,7 +173,7 @@ module.exports = {
     }
   },
   check_out_otp: async (req, res) => {
-    const account_ID  = req.user.id;
+    const account_ID = req.user.id;
     if (!account_ID) {
       return res.status(400).json({
         status: "failed",
@@ -172,6 +192,24 @@ module.exports = {
     const value = myData.value;
     const type = myData.type;
     try {
+      const otp = req.body.otp;
+      if (!otp) {
+        return res
+          .status(404)
+          .json({ status: "error", message: "Not found Otp!" });
+      }
+      const isValidOtp = speakeasy.totp.verify({
+        secret: process.env.OTP_SECRET,
+        token: otp,
+        step: SPEAKEASY_CONFIG.step,
+        digits: SPEAKEASY_CONFIG.digits,
+        encoding: SPEAKEASY_CONFIG.encoding,
+      });
+      if (!isValidOtp) {
+        return res
+          .status(403)
+          .json({ status: "error", message: "Invalid otp!" });
+      }
       const result = await attendModel.check_in_out(
         account_ID,
         device_ID,
