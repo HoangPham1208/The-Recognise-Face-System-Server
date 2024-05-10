@@ -4,7 +4,6 @@ var fs = require("fs");
 var path = require("path");
 var attendController = require("../controller/attendController");
 const { getFaceModelList } = require("../model/managerModel");
-
 /* GET home page. */
 router.get("/getAll", attendController.get_all);
 router.get("/getModelList/:id", async (req, res) => {
