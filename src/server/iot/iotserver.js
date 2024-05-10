@@ -57,20 +57,45 @@ app.get("/labeled", function (req, res) {
 
 // SSE
 const verifyToken = require("../../middleware/authentication");
-const { createSession } = require("better-sse");
+// const { createSession } = require("better-sse");
 const sessions = {};
 module.exports.sessions = sessions;
 
-app.get("/sse", async (req, res) => {
-  const session = await createSession(req, res);
-  const clientId = req.user.id;
-  sessions[clientId] = session;
-  setInterval(() => {
-    if (sessions[clientId])
-      if (session[clientId].isConnected) session.push(1);
-      else delete sessions[clientId];
-  }, 1000);
-});
+// app.get("/sse", async (req, res) => {
+//   const session = await createSession(req, res);
+//   const clientId = req.user.id;
+//   sessions[clientId] = session;
+//   setInterval(() => {
+//     if (sessions[clientId])
+//       if (session[clientId].isConnected) session.push(1);
+//       else delete sessions[clientId];
+//   }, 1000);
+// });
+
+function eventsHandler(request, response, next) {
+  let id = request.user.id;
+  const headers = {
+    "Content-Type": "text/event-stream",
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+  };
+  response.writeHead(200, headers);
+
+  const data = `data: ${JSON.stringify(
+    "Hello from SSE server, connected successfully!"
+  )}\n\n`;
+
+  response.write(data);
+
+  sessions[id] = response;
+
+  request.on("close", () => {
+    console.log(`User ${id} Connection closed`);
+    delete sessions[id];
+  });
+}
+
+app.get("/sse", verifyToken, eventsHandler);
 
 app.get("/index", function (req, res) {
   res.sendFile(path.join(__dirname, "../../../public/views/index.html"));

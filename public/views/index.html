@@ -12,7 +12,7 @@
       // Client
       const sse = new EventSource("http://localhost:4002/sse");
       console.log(sse)
-      sse.addEventListener("message", ({ data }) => {
+      sse.addEventListener("message", ( data ) => {
         console.log(data);
       });
     </script>
