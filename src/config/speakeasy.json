@@ -1,0 +1,7 @@
+{
+  "step": 100,
+  "digits": 4,
+  "window": 6,
+  "length": 20,
+  "encoding": "base32"
+}

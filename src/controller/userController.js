@@ -1,15 +1,13 @@
 const bcryptjs = require("bcryptjs");
 const userModel = require("../model/userModel.js");
 const path = require("path");
+const speakeasy = require("speakeasy");
 
 const updateAvatar = async (req, res) => {
   try {
     const id = req.user.id;
-    const avatar_path = process.env.IMAGES_PATH_AVATAR + id + '.jpg';
-    const isUpdatedUser = await userModel.updateAvatar(
-      id,
-      avatar_path
-    );
+    const avatar_path = process.env.IMAGES_PATH_AVATAR + id + ".jpg";
+    const isUpdatedUser = await userModel.updateAvatar(id, avatar_path);
     res.status(200).json({ status: "ok", message: "Update Successfully" });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
@@ -18,7 +16,7 @@ const updateAvatar = async (req, res) => {
 
 const getAvatar = async (req, res) => {
   try {
-    const id = req.user.id
+    const id = req.user.id;
     const avatar = await userModel.getAvatar(id);
     if (!avatar) {
       return res
@@ -45,38 +43,45 @@ const changePassword = async (req, res) => {
   }
 };
 
+const SPEAKEASY_CONFIG = {
+  step: 100,
+  digits: 4,
+  window: 6,
+  length: 20,
+  encoding: "base32",
+};
+
 const createOtp = async (req, res) => {
-  req.params.id = parseInt(req.params.id);
-  if (req.user.id !== req.params.id) {
-    return res
-      .status(401)
-      .json({ status: "error", message: "You can only create your otp!" });
-  }
   try {
-    const newOtp = await userModel.createOtp(req.params.id);
-    setTimeout(async () => {
-      await deleteOtp(req.params.id);
-    }, 60);
+    const id = req.user.id;
+    const newOtp = speakeasy.totp({
+      secret: process.env.OTP_SECRET,
+      step: SPEAKEASY_CONFIG.step,
+      digits: SPEAKEASY_CONFIG.digits,
+      encoding: SPEAKEASY_CONFIG.encoding,
+    });
     return res.status(200).json({ status: "ok", message: newOtp });
   } catch (err) {
     return res.status(500).json({ status: "error", message: err.message });
   }
 };
 const verifyOtp = async (req, res) => {
-  req.params.id = parseInt(req.params.id);
-  if (req.user.id !== req.params.id) {
-    return res
-      .status(401)
-      .json({ status: "error", message: "You can only create your otp!" });
-  }
   try {
-    const otp = await userModel.getOtp(req.params.id);
+    const id = req.user.id;
+    const otp = req.body.otp;
     if (!otp) {
       return res
         .status(404)
         .json({ status: "error", message: "Not found Otp!" });
     }
-    if (otp != req.body.otp) {
+    const isValidOtp = speakeasy.totp.verify({
+      secret: process.env.OTP_SECRET,
+      token: otp,
+      step: SPEAKEASY_CONFIG.step,
+      digits: SPEAKEASY_CONFIG.digits,
+      encoding: SPEAKEASY_CONFIG.encoding,
+    });
+    if (!isValidOtp) {
       return res.status(403).json({ status: "error", message: "Invalid otp!" });
     }
     return res.status(200).json({ status: "ok", message: "Successful!" });
@@ -164,8 +169,6 @@ const getNotification = async (req, res) => {
     return res.status(500).json({ status: "error", message: err.message });
   }
 };
-
-
 
 module.exports = {
   updateAvatar,

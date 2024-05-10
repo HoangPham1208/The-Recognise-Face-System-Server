@@ -1,9 +1,10 @@
-const { session } = require("../server/iot/iotserver");
+const { sessions } = require("../server/iot/iotserver");
 
 function sendAnnouncement(account_ID, message) {
-  if (session[account_ID]) {
-    if (session[account_ID].isConnected) session[account_ID].push(message);
-    else delete session[account_ID];
+  // console.log(sessions.hasOwnProperty(account_ID));
+  if (sessions[account_ID]) {
+    if (sessions[account_ID].isConnected) sessions[account_ID].push(message);
+    else delete sessions[account_ID];
   }
 }
 

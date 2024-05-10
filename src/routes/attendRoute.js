@@ -29,4 +29,5 @@ router.get("/getModelList/:id", async (req, res) => {
 });
 router.post("/check-in", attendController.check_in);
 router.post("/check-out", attendController.check_out);
+
 module.exports = router;
