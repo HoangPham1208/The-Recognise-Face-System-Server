@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/authentication");
 const userController = require("../controller/userController");
 const updateAvatarHelper = require("../middleware/updateAvatar");
-// const attendController = require("../controller/attendController");
+
 router.patch(
   "/updateAvatar",
   verifyToken,
@@ -19,6 +19,5 @@ router.get("/getForm", verifyToken, userController.getForm);
 router.get("/getNotification", verifyToken, userController.getNotification);
 router.post("/createOtp", verifyToken, userController.createOtp);
 router.post("/verifyOtp", verifyToken, userController.verifyOtp);
-// router.post("/check-in-otp", verifyToken, attendController.check_in_otp);
-// router.post("/check-out-otp", verifyToken, attendController.check_out_otp);
+
 module.exports = router;
