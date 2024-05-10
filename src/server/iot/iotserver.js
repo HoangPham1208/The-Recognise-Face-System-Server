@@ -60,8 +60,8 @@ app.get("/labeled", function (req, res) {
 const verifyToken = require("../../middleware/authentication");
 // const { createSession } = require("better-sse");
 const sessions = {};
-module.exports.sessions = sessions;
 
+module.exports.sessions = sessions
 // app.get("/sse", async (req, res) => {
 //   const session = await createSession(req, res);
 //   const clientId = req.user.id;
