@@ -7,7 +7,6 @@ const {
   updateCheckOut,
   updateStatusDate,
 } = require("../../model/attendModel");
-const { get } = require("../../routes/authRoute");
 
 const cronExpressions = {
   morning_shift_begin: "15 7 * * 1-6",

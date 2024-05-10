@@ -1,6 +1,6 @@
 const attendModel = require("../model/attendModel");
 const data_process = require("../helper/timeManagement");
-const { stat } = require("fs");
+const { sendAnnouncement } = require("../helper/announcement");
 
 module.exports = {
   get_all: async (req, res) => {
@@ -46,6 +46,10 @@ module.exports = {
           time,
           value
         );
+        sendAnnouncement(
+          account_ID,
+          "Check in successfully at " + date + " " + time
+        );
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "Check_in failed" });
     } catch (error) {
@@ -89,6 +93,10 @@ module.exports = {
           date,
           time,
           value
+        );
+        sendAnnouncement(
+          account_ID,
+          "Check out successfully at " + date + " " + time
         );
         return res.status(200).json({ status: "OK" });
       } else return res.status(401).json({ status: "Check_out failed" });
