@@ -4,6 +4,7 @@ var fs = require("fs");
 var path = require("path");
 var attendController = require("../controller/attendController");
 const { getFaceModelList } = require("../model/managerModel");
+const verifyToken = require("../middleware/authentication");
 
 /* GET home page. */
 router.get("/getAll", attendController.get_all);
@@ -29,5 +30,6 @@ router.get("/getModelList/:id", async (req, res) => {
 });
 router.post("/check-in", attendController.check_in);
 router.post("/check-out", attendController.check_out);
-
+router.post("/check-in-otp", verifyToken, attendController.check_in_otp);
+router.post("/check-out-otp", verifyToken, attendController.check_out_otp);
 module.exports = router;

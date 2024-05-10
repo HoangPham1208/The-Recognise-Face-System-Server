@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/authentication");
 const userController = require("../controller/userController");
 const updateAvatarHelper = require("../middleware/updateAvatar");
-const attendController = require("../controller/attendController");
+// const attendController = require("../controller/attendController");
 // router.get('/gen-otp', verifyToken, userController.generateOtp)
 // router.get('/verify-otp', verifyToken, userController.verifyOtp)
 router.patch(
