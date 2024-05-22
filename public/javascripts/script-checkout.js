@@ -94,13 +94,13 @@ async function loadLabeledImages() {
   const labels = labelsData.name_list;
   const labeledFaceDescriptors = await Promise.all(
     labels.map(async (label) => {
-      let data = await fetchData(`http://localhost:4002/attend/getModelList/${label}`)
-      let list = data.message
+      let data = await fetchData(
+        `http://localhost:4002/attend/getModelList/${label}`
+      );
+      let list = data.message;
       const descriptions = [];
       for (let i = 0; i < list.length; i++) {
-        const img = await faceapi.fetchImage(
-          `../${list[i]}`
-        );
+        const img = await faceapi.fetchImage(`../${list[i]}`);
         const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
@@ -160,7 +160,10 @@ function fetchTempAndHumi() {
     .then((data) => {
       // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
       document.getElementById("temp").textContent = data.last_value;
-      document.getElementById("temp_time").textContent =  data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+      document.getElementById("temp_time").textContent =
+        data.updated_at.split("T")[1].split("Z")[0] +
+        "   " +
+        data.updated_at.split("T")[0];
     })
     .catch((error) => console.error("Error fetching data:", error));
   fetch("https://io.adafruit.com/api/v2/QuangBang/feeds/cambien3")
@@ -168,20 +171,28 @@ function fetchTempAndHumi() {
     .then((data) => {
       // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
       document.getElementById("humi").textContent = data.last_value;
-      document.getElementById("humi_time").textContent = data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+      document.getElementById("humi_time").textContent =
+        data.updated_at.split("T")[1].split("Z")[0] +
+        "   " +
+        data.updated_at.split("T")[0];
     })
     .catch((error) => console.error("Error fetching data:", error));
 }
 
 // Call fetchDataAndUpdate initially
-fetchTempAndHumi()
+fetchTempAndHumi();
 
 // Call fetchDataAndUpdate every 5 seconds
 setInterval(fetchTempAndHumi, 5000);
 
 function checkout() {
+  if (!information) {
+    alert("Not recognized, please try again!");
+    return;
+  }
   const url = "http://localhost:4002/attend/check-out";
   postData(url);
+  alert("Check out successfully!");
 }
 function reset() {
   information = "";

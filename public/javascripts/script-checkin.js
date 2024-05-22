@@ -47,7 +47,7 @@ async function startVideo() {
   }
   // setInterval(checkForUpdates, 300000); // update each 5 mins
 
-  const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.5);
+  const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
   video.addEventListener("play", () => {
     const canvas = faceapi.createCanvasFromMedia(video); // got canvas
@@ -161,7 +161,10 @@ function fetchTempAndHumi() {
     .then((data) => {
       // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
       document.getElementById("temp").textContent = data.last_value;
-      document.getElementById("temp_time").textContent =  data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+      document.getElementById("temp_time").textContent =
+        data.updated_at.split("T")[1].split("Z")[0] +
+        "   " +
+        data.updated_at.split("T")[0];
     })
     .catch((error) => console.error("Error fetching data:", error));
   fetch("https://io.adafruit.com/api/v2/QuangBang/feeds/cambien3")
@@ -169,20 +172,28 @@ function fetchTempAndHumi() {
     .then((data) => {
       // Assuming the API returns data in the format { temperature: 25, humidity: 60 }
       document.getElementById("humi").textContent = data.last_value;
-      document.getElementById("humi_time").textContent = data.updated_at.split('T')[1].split('Z')[0] + "   " + data.updated_at.split('T')[0];
+      document.getElementById("humi_time").textContent =
+        data.updated_at.split("T")[1].split("Z")[0] +
+        "   " +
+        data.updated_at.split("T")[0];
     })
     .catch((error) => console.error("Error fetching data:", error));
 }
 
 // Call fetchDataAndUpdate initially
-fetchTempAndHumi()
+fetchTempAndHumi();
 
 // Call fetchDataAndUpdate every 5 seconds
 setInterval(fetchTempAndHumi, 5000);
 
 function checkin() {
+  if (!information) {
+    alert("Not recognized, please try again!");
+    return;
+  }
   const url = "http://localhost:4002/attend/check-in";
   postData(url);
+  alert("Check in successfully!");
 }
 function reset() {
   information = "";
